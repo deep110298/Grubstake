@@ -14,12 +14,14 @@ export default function Home() {
   const [step, setStep] = useState<Step>('capture');
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [droppedByAllergenCheck, setDroppedByAllergenCheck] = useState(0);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
   function startOver() {
     setStep('capture');
     setIngredients([]);
     setRecipes([]);
+    setDroppedByAllergenCheck(0);
     setSelectedRecipe(null);
   }
 
@@ -51,8 +53,9 @@ export default function Home() {
         <PreferencesScreen
           ingredients={ingredients}
           onBack={() => setStep('confirm')}
-          onContinue={(generated) => {
+          onContinue={(generated, dropped) => {
             setRecipes(generated);
+            setDroppedByAllergenCheck(dropped);
             setStep('results');
           }}
         />
@@ -62,6 +65,7 @@ export default function Home() {
       return (
         <ResultsScreen
           recipes={recipes}
+          droppedByAllergenCheck={droppedByAllergenCheck}
           onBack={() => setStep('preferences')}
           onSelect={(recipe) => {
             setSelectedRecipe(recipe);

@@ -54,6 +54,7 @@ export interface Recipe {
   timeMinutes: number;
   ingredients: RecipeIngredient[];
   steps: string[];
+  imageUrl?: string; // from the generation response; omitted falls back to a placeholder
 }
 
 export interface CapturedPhoto {
