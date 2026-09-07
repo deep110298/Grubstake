@@ -22,6 +22,7 @@ import RoundEndModal from './RoundEndModal';
 import RulesModal from './RulesModal';
 import Scoreboard from './Scoreboard';
 import SetupScreen from './SetupScreen';
+import WildCardAnnouncement from './WildCardAnnouncement';
 
 export default function GameBoard() {
   const [state, setState] = useState<GameState | null>(null);
@@ -73,6 +74,7 @@ export default function GameBoard() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
+      <WildCardAnnouncement jokerRank={state.jokerRank} />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-4 py-4">
         <Scoreboard state={state} />
 

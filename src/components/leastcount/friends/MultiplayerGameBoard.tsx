@@ -15,6 +15,7 @@ import {
 import type { MPGameState } from '@/lib/multiplayer/types';
 import PlayingCard, { CardBack } from '@/components/leastcount/PlayingCard';
 import RulesModal from '@/components/leastcount/RulesModal';
+import WildCardAnnouncement from '@/components/leastcount/WildCardAnnouncement';
 import MPScoreboard from './MPScoreboard';
 import MPRoundEndModal from './MPRoundEndModal';
 import MPGameOverModal from './MPGameOverModal';
@@ -95,6 +96,7 @@ export default function MultiplayerGameBoard({
 
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
+      <WildCardAnnouncement jokerRank={state.jokerRank} />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-4 py-4">
         <MPScoreboard state={display} />
 

@@ -37,6 +37,12 @@ export default function PlayingCard({
   const isWildRank = card.rank === jokerRank;
   const isZeroValue = isPhysicalJoker || isWildRank;
 
+  const borderClasses = selected
+    ? '-translate-y-2 border-accent ring-2 ring-accent'
+    : isZeroValue
+      ? 'border-warn-in-progress ring-2 ring-warn-in-progress/50'
+      : 'border-hairline-card';
+
   return (
     <button
       type="button"
@@ -44,7 +50,7 @@ export default function PlayingCard({
       disabled={!onClick || disabled}
       className={`relative flex flex-shrink-0 flex-col items-center justify-center rounded-lg border bg-surface font-mono font-semibold shadow-sm transition-transform ${SIZE_CLASSES[size]} ${
         isRed ? 'text-error' : isPhysicalJoker ? 'text-accent' : 'text-ink'
-      } ${selected ? '-translate-y-2 border-accent ring-2 ring-accent' : 'border-hairline-card'} ${
+      } ${borderClasses} ${
         onClick && !disabled ? 'cursor-pointer hover:-translate-y-1' : ''
       } ${disabled ? 'opacity-50' : ''}`}
       aria-pressed={selected}
@@ -59,7 +65,7 @@ export default function PlayingCard({
         </>
       )}
       {isZeroValue && (
-        <span className="absolute -top-2 -right-2 rounded-full bg-accent px-1 text-[9px] font-bold leading-tight text-white">
+        <span className="absolute -top-2 -right-2 rounded-full bg-warn-in-progress px-1 text-[9px] font-bold leading-tight text-white">
           0
         </span>
       )}

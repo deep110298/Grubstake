@@ -55,6 +55,10 @@
 
   --color-error: var(--error);
 
+  --color-hairline: var(--hairline);
+  --color-hairline-card: var(--hairline-card);
+  --color-input-border: var(--input-border);
+
   --font-sans: var(--font-instrument-sans);
   --font-mono: var(--font-ibm-plex-mono);
 }
