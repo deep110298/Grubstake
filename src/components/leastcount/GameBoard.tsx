@@ -17,6 +17,7 @@ import {
 } from '@/lib/leastCount/engine';
 import type { GameState } from '@/lib/leastCount/types';
 import GameOverModal from './GameOverModal';
+import PauseModal from './PauseModal';
 import PlayingCard, { CardBack } from './PlayingCard';
 import RoundEndModal from './RoundEndModal';
 import RulesModal from './RulesModal';
@@ -28,17 +29,18 @@ export default function GameBoard() {
   const [state, setState] = useState<GameState | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [showRules, setShowRules] = useState(false);
+  const [paused, setPaused] = useState(false);
   const computerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!state || state.turn !== 'computer' || state.phase !== 'awaiting-action') return;
+    if (!state || paused || state.turn !== 'computer' || state.phase !== 'awaiting-action') return;
     computerTimer.current = setTimeout(() => {
       setState((current) => (current ? computerTakeTurn(current) : current));
     }, 800);
     return () => {
       if (computerTimer.current) clearTimeout(computerTimer.current);
     };
-  }, [state]);
+  }, [state, paused]);
 
   if (!state) {
     return <SetupScreen onStart={(target) => setState(newGame(target))} />;
@@ -78,13 +80,22 @@ export default function GameBoard() {
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
         <Scoreboard state={state} />
 
-        <button
-          type="button"
-          onClick={() => setShowRules(true)}
-          className="mono-label -mt-2 self-end text-[11px] text-ink-muted hover:text-ink"
-        >
-          Rules
-        </button>
+        <div className="-mt-2 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setPaused(true)}
+            className="mono-label text-[11px] text-ink-muted hover:text-ink"
+          >
+            Pause
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowRules(true)}
+            className="mono-label text-[11px] text-ink-muted hover:text-ink"
+          >
+            Rules
+          </button>
+        </div>
 
         <section className="flex flex-col items-center gap-2 pt-1">
           <span className="mono-label text-[11px] text-ink-muted">Computer · {state.hands.computer.length} cards</span>
@@ -186,6 +197,17 @@ export default function GameBoard() {
       </div>
 
       {showRules && <RulesModal onClose={() => setShowRules(false)} />}
+
+      {paused && (
+        <PauseModal
+          onResume={() => setPaused(false)}
+          onRestart={() => {
+            setState(newGame(state.target));
+            setSelected([]);
+            setPaused(false);
+          }}
+        />
+      )}
 
       {state.phase === 'round-end' && state.lastRoundResult && (
         <RoundEndModal
