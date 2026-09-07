@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
+import LeastCountLink from "@/components/LeastCountLink";
 import "./globals.css";
 
 const instrumentSans = Instrument_Sans({
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-canvas text-ink font-sans">
         {children}
+        <LeastCountLink />
       </body>
     </html>
   );
