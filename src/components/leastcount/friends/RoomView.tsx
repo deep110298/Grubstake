@@ -135,7 +135,7 @@ export default function RoomView({ code }: { code: string }) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-canvas px-4 text-center">
         <div>
-          <h1 className="text-xl font-semibold text-ink">Join room {roomCode}</h1>
+          <h1 className="font-display text-xl font-semibold text-ink">Join room {roomCode}</h1>
           <p className="mt-1 text-sm text-ink-muted">Enter your name to join.</p>
         </div>
         <input

@@ -13,7 +13,7 @@ export default function RoundEndModal({
 
   return (
     <Modal>
-      <h2 className="text-lg font-semibold text-ink">
+      <h2 className="font-display text-lg font-semibold text-ink">
         {result.correct ? `${callerLabel} called it right!` : `${callerLabel} called it wrong.`}
       </h2>
       <p className="mt-1 text-sm text-ink-muted">

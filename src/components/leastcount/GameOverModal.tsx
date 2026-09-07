@@ -14,7 +14,7 @@ export default function GameOverModal({
 
   return (
     <Modal>
-      <h2 className="text-xl font-semibold text-ink">{won ? 'You win!' : 'Computer wins.'}</h2>
+      <h2 className="font-display text-xl font-semibold text-ink">{won ? 'You win!' : 'Computer wins.'}</h2>
       <p className="mt-1 text-sm text-ink-muted">
         Final score — You: {state.scores.player} &middot; Computer: {state.scores.computer}
       </p>

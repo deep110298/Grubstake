@@ -61,6 +61,7 @@
 
   --font-sans: var(--font-instrument-sans);
   --font-mono: var(--font-ibm-plex-mono);
+  --font-display: var(--font-fredoka);
 }
 
 body {

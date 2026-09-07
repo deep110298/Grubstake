@@ -37,7 +37,7 @@ export default function Lobby({
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-6 bg-canvas px-4 py-10 text-center">
       <div>
-        <h1 className="text-2xl font-semibold text-ink">Waiting for players</h1>
+        <h1 className="font-display text-2xl font-semibold text-ink">Waiting for players</h1>
         <p className="mt-2 text-sm text-ink-muted">
           Target score {room.target_score} &middot; up to {room.max_players} players
         </p>

@@ -1,7 +1,9 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { useState } from 'react';
+import PlayingCard from './PlayingCard';
 import RulesModal from './RulesModal';
 
 const TARGET_OPTIONS = [50, 100, 150];
@@ -15,14 +17,26 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
       <Link href="/" className="mono-label absolute left-4 top-4 text-xs text-ink-faint hover:text-ink">
         ← Home
       </Link>
+
+      <div className="hero-card" style={{ '--card-tilt': '-8deg', '--card-lift': '0px' } as CSSProperties}>
+        <div className="hero-card-inner">
+          <PlayingCard card={{ id: 'setup-hero', suit: 'spades', rank: 'A' }} jokerRank="A" size="md" />
+        </div>
+      </div>
+
       <div>
-        <h1 className="text-3xl font-semibold text-ink">Least Count App</h1>
-        <p className="mt-2 max-w-xs text-sm text-ink-muted">
-          Keep your hand&apos;s value low, call when you think you&apos;re lowest, and beat the computer to the finish.
+        <h1 className="fade-up font-display text-3xl font-semibold tracking-tight text-ink" style={{ animationDelay: '80ms' }}>
+          Play vs Computer
+        </h1>
+        <p className="fade-up mt-2 max-w-xs text-sm text-ink-muted" style={{ animationDelay: '160ms' }}>
+          Keep your hand low and call it before the computer does.
         </p>
       </div>
 
-      <div className="w-full max-w-xs rounded-xl border border-hairline bg-surface p-4">
+      <div
+        className="fade-up w-full max-w-xs rounded-2xl border border-hairline bg-surface p-4"
+        style={{ animationDelay: '240ms' }}
+      >
         <div className="mono-label text-xs text-ink-faint">Play to</div>
         <div className="mt-2 flex gap-2">
           {TARGET_OPTIONS.map((option) => (
@@ -30,7 +44,7 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
               key={option}
               type="button"
               onClick={() => setTarget(option)}
-              className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+              className={`flex-1 rounded-xl border-2 px-3 py-2 text-sm font-medium transition-all active:scale-95 ${
                 target === option
                   ? 'border-accent bg-accent-tint text-accent'
                   : 'border-hairline text-ink-muted hover:bg-surface-sunken'
@@ -42,18 +56,18 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
         </div>
       </div>
 
-      <div className="flex w-full max-w-xs flex-col gap-2">
+      <div className="fade-up flex w-full max-w-xs flex-col gap-2" style={{ animationDelay: '320ms' }}>
         <button
           type="button"
           onClick={() => onStart(target)}
-          className="w-full rounded-lg bg-accent px-4 py-3 font-medium text-white transition-opacity hover:opacity-90"
+          className="font-display w-full rounded-2xl bg-accent px-4 py-3 font-medium text-white transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 active:scale-95"
         >
           Start game
         </button>
         <button
           type="button"
           onClick={() => setShowRules(true)}
-          className="w-full rounded-lg border border-hairline px-4 py-2.5 font-medium text-ink transition-colors hover:bg-surface-sunken"
+          className="font-display w-full rounded-2xl border-2 border-hairline px-4 py-2.5 font-medium text-ink transition-all hover:-translate-y-0.5 hover:bg-surface-sunken active:translate-y-0 active:scale-95"
         >
           How to play
         </button>

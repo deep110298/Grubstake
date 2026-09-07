@@ -17,7 +17,7 @@ export default function MPGameOverModal({
 
   return (
     <Modal>
-      <h2 className="text-xl font-semibold text-ink">{winnerName ? `${winnerName} wins!` : 'Game over'}</h2>
+      <h2 className="font-display text-xl font-semibold text-ink">{winnerName ? `${winnerName} wins!` : 'Game over'}</h2>
       <div className="mt-3 space-y-1">
         {ranked.map((seat) => (
           <div key={seat} className="flex items-center justify-between text-sm">

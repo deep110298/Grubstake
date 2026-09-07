@@ -14,7 +14,7 @@ export default function RulesModal({
 
   return (
     <Modal>
-      <h2 className="text-lg font-semibold text-ink">How to play</h2>
+      <h2 className="font-display text-lg font-semibold text-ink">How to play</h2>
       <div className="mt-3 space-y-3 text-sm text-ink-muted">
         {isComputer ? (
           <p><strong className="text-ink">Card values:</strong> number cards count as their face value. Aces count as 1. Face cards (J, Q, K) count as 10.</p>

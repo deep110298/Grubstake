@@ -34,24 +34,24 @@ export default function Home() {
       </div>
 
       <div>
-        <h1 className="fade-up text-3xl font-semibold text-ink" style={{ animationDelay: '260ms' }}>
+        <h1 className="fade-up font-display text-4xl font-semibold tracking-tight text-ink" style={{ animationDelay: '260ms' }}>
           Least Count App
         </h1>
         <p className="fade-up mt-2 max-w-xs text-sm text-ink-muted" style={{ animationDelay: '360ms' }}>
-          Keep your hand&apos;s value low, call when you think you&apos;re lowest, and beat the table.
+          Lowest hand wins — draw, discard, and call it before anyone else does.
         </p>
       </div>
 
       <div className="fade-up flex w-full max-w-xs flex-col gap-2" style={{ animationDelay: '460ms' }}>
         <Link
           href="/play/computer"
-          className="w-full rounded-lg bg-accent px-4 py-3 font-medium text-white transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 active:scale-[0.98]"
+          className="font-display w-full rounded-2xl bg-accent px-4 py-3 font-medium text-white transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 active:scale-95"
         >
           Play vs Computer
         </Link>
         <Link
           href="/play/friends"
-          className="w-full rounded-lg border border-hairline px-4 py-2.5 font-medium text-ink transition-all hover:-translate-y-0.5 hover:bg-surface-sunken active:translate-y-0 active:scale-[0.98]"
+          className="font-display w-full rounded-2xl border-2 border-hairline px-4 py-2.5 font-medium text-ink transition-all hover:-translate-y-0.5 hover:bg-surface-sunken active:translate-y-0 active:scale-95"
         >
           Play with Friends
         </Link>
