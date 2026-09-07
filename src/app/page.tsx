@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
+import Logo from '@/components/leastcount/Logo';
 import PlayingCard from '@/components/leastcount/PlayingCard';
 
 const HERO_CARDS = [
@@ -34,10 +35,8 @@ export default function Home() {
       </div>
 
       <div>
-        <h1 className="fade-up font-display text-4xl font-semibold tracking-tight text-ink" style={{ animationDelay: '260ms' }}>
-          Least Count App
-        </h1>
-        <p className="fade-up mt-2 max-w-xs text-sm text-ink-muted" style={{ animationDelay: '360ms' }}>
+        <Logo size="lg" className="fade-up" style={{ animationDelay: '260ms' }} />
+        <p className="fade-up mt-3 max-w-xs text-sm text-ink-muted" style={{ animationDelay: '360ms' }}>
           Lowest hand wins — draw, discard, and call it before anyone else does.
         </p>
       </div>

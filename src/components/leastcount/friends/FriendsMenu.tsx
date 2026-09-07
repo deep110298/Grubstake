@@ -4,6 +4,7 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useSyncExternalStore } from 'react';
+import Logo from '@/components/leastcount/Logo';
 import PlayingCard from '@/components/leastcount/PlayingCard';
 import { createRoom, joinRoom, RoomServiceError } from '@/lib/multiplayer/roomService';
 import { getPlayerId } from '@/lib/multiplayer/playerId';
@@ -107,6 +108,8 @@ export default function FriendsMenu() {
 
       {view === 'choice' && (
         <>
+          <Logo size="sm" className="fade-up" />
+
           <div className="flex justify-center -space-x-5">
             <div className="hero-card" style={{ '--card-tilt': '-10deg', '--card-lift': '4px' } as CSSProperties}>
               <div className="hero-card-inner" style={{ '--float-delay': '0s' } as CSSProperties}>

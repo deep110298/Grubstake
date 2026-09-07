@@ -73,11 +73,22 @@ export default function PlayingCard({
   );
 }
 
+const BACK_SPADE_SIZE: Record<NonNullable<PlayingCardProps['size']>, string> = {
+  sm: 'text-lg',
+  md: 'text-2xl',
+  lg: 'text-3xl',
+};
+
 export function CardBack({ size = 'md' }: { size?: PlayingCardProps['size'] }) {
   return (
     <div
-      className={`flex flex-shrink-0 items-center justify-center rounded-lg border border-hairline-card ${SIZE_CLASSES[size ?? 'md']}`}
+      className={`flex flex-shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg border border-hairline-card ${SIZE_CLASSES[size ?? 'md']}`}
       style={{ background: 'repeating-linear-gradient(135deg, #2f6b4f 0 6px, #245740 6px 12px)' }}
-    />
+    >
+      <span className={`font-mono leading-none text-canvas/90 ${BACK_SPADE_SIZE[size ?? 'md']}`}>♠</span>
+      {size !== 'sm' && (
+        <span className="mono-label text-[6px] leading-none text-canvas/70">Least Count</span>
+      )}
+    </div>
   );
 }

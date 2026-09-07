@@ -3,6 +3,7 @@
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { useState } from 'react';
+import Logo from './Logo';
 import PlayingCard from './PlayingCard';
 import RulesModal from './RulesModal';
 
@@ -17,6 +18,8 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
       <Link href="/" className="mono-label absolute left-4 top-4 text-xs text-ink-faint hover:text-ink">
         ← Home
       </Link>
+
+      <Logo size="sm" className="fade-up" />
 
       <div className="hero-card" style={{ '--card-tilt': '-8deg', '--card-lift': '0px' } as CSSProperties}>
         <div className="hero-card-inner">
