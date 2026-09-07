@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { handValue, sortHand } from '@/lib/multiplayer/deck';
 import {
   call,
@@ -13,12 +14,16 @@ import {
   playCards,
 } from '@/lib/multiplayer/engine';
 import type { MPGameState } from '@/lib/multiplayer/types';
+import CallAnnouncement from '@/components/leastcount/CallAnnouncement';
 import PlayingCard, { CardBack } from '@/components/leastcount/PlayingCard';
 import RulesModal from '@/components/leastcount/RulesModal';
 import WildCardRevealModal from '@/components/leastcount/WildCardRevealModal';
 import MPScoreboard from './MPScoreboard';
 import MPRoundEndModal from './MPRoundEndModal';
 import MPGameOverModal from './MPGameOverModal';
+
+const DEAL_SPRING = { type: 'spring' as const, stiffness: 320, damping: 26 };
+const CALL_REVEAL_DELAY = 2200;
 
 export default function MultiplayerGameBoard({
   state,
@@ -42,6 +47,8 @@ export default function MultiplayerGameBoard({
   const [selected, setSelected] = useState<string[]>([]);
   const [showRules, setShowRules] = useState(false);
   const [localOverride, setLocalOverride] = useState<MPGameState | null>(null);
+  const [revealRoundEnd, setRevealRoundEnd] = useState(false);
+  const [prevRoundEndKey, setPrevRoundEndKey] = useState<string | null>(null);
 
   // Once the authoritative state from the server changes, drop any
   // optimistic override and pending selection for the turn that just ended.
@@ -55,6 +62,22 @@ export default function MultiplayerGameBoard({
   }
 
   const display = localOverride ?? state;
+
+  // Reset whether the round breakdown has been revealed yet whenever we
+  // enter (or leave) the round-end phase — adjusting state during render
+  // rather than in an effect, same reasoning as above.
+  const roundEndKey = display.phase === 'round-end' ? String(display.roundNumber) : null;
+  if (roundEndKey !== prevRoundEndKey) {
+    setPrevRoundEndKey(roundEndKey);
+    setRevealRoundEnd(false);
+  }
+
+  // Give a call its moment before the full round breakdown appears.
+  useEffect(() => {
+    if (!roundEndKey) return;
+    const timer = setTimeout(() => setRevealRoundEnd(true), CALL_REVEAL_DELAY);
+    return () => clearTimeout(timer);
+  }, [roundEndKey]);
 
   function commit(next: MPGameState) {
     setLocalOverride(next);
@@ -155,7 +178,14 @@ export default function MultiplayerGameBoard({
               </div>
               <div className="flex flex-col items-center gap-2">
                 {discardTop ? (
-                  <PlayingCard card={discardTop} jokerRank={display.jokerRank} size="lg" />
+                  <motion.div
+                    key={discardTop.id}
+                    initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={DEAL_SPRING}
+                  >
+                    <PlayingCard card={discardTop} jokerRank={display.jokerRank} size="lg" />
+                  </motion.div>
                 ) : (
                   <div className="h-24 w-16 rounded-lg border border-dashed border-hairline" />
                 )}
@@ -174,17 +204,27 @@ export default function MultiplayerGameBoard({
                 Your hand
                 <span className="text-accent">{myHandValue} pts</span>
               </span>
-              <div className="flex flex-wrap justify-center gap-2">
-                {sortHand(myHand).map((card) => (
-                  <PlayingCard
-                    key={card.id}
-                    card={card}
-                    jokerRank={display.jokerRank}
-                    selected={selected.includes(card.id)}
-                    disabled={!yourTurnToAct}
-                    onClick={() => handleHandCardClick(card.id)}
-                  />
-                ))}
+              <div className="flex flex-wrap justify-center gap-2" key={display.roundNumber}>
+                <AnimatePresence mode="popLayout">
+                  {sortHand(myHand).map((card, i) => (
+                    <motion.div
+                      key={card.id}
+                      layout
+                      initial={{ opacity: 0, y: 40, scale: 0.7 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -50, scale: 0.6, transition: { duration: 0.22 } }}
+                      transition={{ ...DEAL_SPRING, delay: i * 0.06 }}
+                    >
+                      <PlayingCard
+                        card={card}
+                        jokerRank={display.jokerRank}
+                        selected={selected.includes(card.id)}
+                        disabled={!yourTurnToAct}
+                        onClick={() => handleHandCardClick(card.id)}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
             </section>
 
@@ -214,7 +254,11 @@ export default function MultiplayerGameBoard({
 
       {showRules && <RulesModal variant="friends" onClose={() => setShowRules(false)} />}
 
-      {display.phase === 'round-end' && display.lastRoundResult && (
+      {display.phase === 'round-end' && display.lastRoundResult && !revealRoundEnd && (
+        <CallAnnouncement callerLabel={display.names[display.lastRoundResult.caller]} />
+      )}
+
+      {display.phase === 'round-end' && display.lastRoundResult && revealRoundEnd && (
         <MPRoundEndModal
           state={display}
           result={display.lastRoundResult}

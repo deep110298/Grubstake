@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { computerTakeTurn } from '@/lib/leastCount/ai';
 import { handValue, sortHand } from '@/lib/leastCount/deck';
 import {
@@ -16,6 +17,7 @@ import {
   startNextRound,
 } from '@/lib/leastCount/engine';
 import type { GameState } from '@/lib/leastCount/types';
+import CallAnnouncement from './CallAnnouncement';
 import GameOverModal from './GameOverModal';
 import PauseModal from './PauseModal';
 import PlayingCard, { CardBack } from './PlayingCard';
@@ -25,11 +27,16 @@ import Scoreboard from './Scoreboard';
 import SetupScreen from './SetupScreen';
 import WildCardRevealModal from './WildCardRevealModal';
 
+const DEAL_SPRING = { type: 'spring' as const, stiffness: 320, damping: 26 };
+const CALL_REVEAL_DELAY = 2200;
+
 export default function GameBoard() {
   const [state, setState] = useState<GameState | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [showRules, setShowRules] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [revealRoundEnd, setRevealRoundEnd] = useState(false);
+  const [prevRoundEndKey, setPrevRoundEndKey] = useState<string | null>(null);
   const computerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -41,6 +48,23 @@ export default function GameBoard() {
       if (computerTimer.current) clearTimeout(computerTimer.current);
     };
   }, [state, paused]);
+
+  // Reset whether the round breakdown has been revealed yet whenever we
+  // enter (or leave) the round-end phase — adjusting state during render
+  // rather than in an effect, per
+  // https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes.
+  const roundEndKey = state && state.phase === 'round-end' ? String(state.roundNumber) : null;
+  if (roundEndKey !== prevRoundEndKey) {
+    setPrevRoundEndKey(roundEndKey);
+    setRevealRoundEnd(false);
+  }
+
+  // Give a call its moment before the full round breakdown appears.
+  useEffect(() => {
+    if (!roundEndKey) return;
+    const timer = setTimeout(() => setRevealRoundEnd(true), CALL_REVEAL_DELAY);
+    return () => clearTimeout(timer);
+  }, [roundEndKey]);
 
   if (!state) {
     return <SetupScreen onStart={(target) => setState(newGame(target))} />;
@@ -99,10 +123,21 @@ export default function GameBoard() {
 
         <section className="flex flex-col items-center gap-2 pt-1">
           <span className="mono-label text-[11px] text-ink-muted">Computer · {state.hands.computer.length} cards</span>
-          <div className="flex gap-1.5">
-            {state.hands.computer.map((card) => (
-              <CardBack key={card.id} size="sm" />
-            ))}
+          <div className="flex gap-1.5" key={state.roundNumber}>
+            <AnimatePresence mode="popLayout">
+              {state.hands.computer.map((card, i) => (
+                <motion.div
+                  key={card.id}
+                  layout
+                  initial={{ opacity: 0, y: 30, scale: 0.7 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -30, scale: 0.6, transition: { duration: 0.2 } }}
+                  transition={{ ...DEAL_SPRING, delay: i * 0.06 }}
+                >
+                  <CardBack size="sm" />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </section>
 
@@ -142,7 +177,14 @@ export default function GameBoard() {
               </div>
               <div className="flex flex-col items-center gap-2">
                 {discardTop ? (
-                  <PlayingCard card={discardTop} jokerRank={state.jokerRank} size="lg" />
+                  <motion.div
+                    key={discardTop.id}
+                    initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={DEAL_SPRING}
+                  >
+                    <PlayingCard card={discardTop} jokerRank={state.jokerRank} size="lg" />
+                  </motion.div>
                 ) : (
                   <div className="h-24 w-16 rounded-lg border border-dashed border-hairline" />
                 )}
@@ -159,17 +201,27 @@ export default function GameBoard() {
             Your hand
             <span className="text-accent">{yourHandValue} pts</span>
           </span>
-          <div className="flex flex-wrap justify-center gap-2">
-            {sortHand(state.hands.player).map((card) => (
-              <PlayingCard
-                key={card.id}
-                card={card}
-                jokerRank={state.jokerRank}
-                selected={selected.includes(card.id)}
-                disabled={!yourTurnToAct}
-                onClick={() => handleHandCardClick(card.id)}
-              />
-            ))}
+          <div className="flex flex-wrap justify-center gap-2" key={state.roundNumber}>
+            <AnimatePresence mode="popLayout">
+              {sortHand(state.hands.player).map((card, i) => (
+                <motion.div
+                  key={card.id}
+                  layout
+                  initial={{ opacity: 0, y: 40, scale: 0.7 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -50, scale: 0.6, transition: { duration: 0.22 } }}
+                  transition={{ ...DEAL_SPRING, delay: i * 0.06 }}
+                >
+                  <PlayingCard
+                    card={card}
+                    jokerRank={state.jokerRank}
+                    selected={selected.includes(card.id)}
+                    disabled={!yourTurnToAct}
+                    onClick={() => handleHandCardClick(card.id)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </section>
 
@@ -209,7 +261,11 @@ export default function GameBoard() {
         />
       )}
 
-      {state.phase === 'round-end' && state.lastRoundResult && (
+      {state.phase === 'round-end' && state.lastRoundResult && !revealRoundEnd && (
+        <CallAnnouncement callerLabel={state.lastRoundResult.caller === 'player' ? 'You' : 'Computer'} />
+      )}
+
+      {state.phase === 'round-end' && state.lastRoundResult && revealRoundEnd && (
         <RoundEndModal
           state={state}
           result={state.lastRoundResult}

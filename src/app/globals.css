@@ -146,11 +146,31 @@ body {
   animation: pulse-dot 1.6s ease-in-out infinite;
 }
 
+@keyframes call-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.call-pop {
+  animation: call-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-card,
   .hero-card-inner,
   .fade-up,
-  .pulse-dot {
+  .pulse-dot,
+  .call-pop {
     animation: none;
   }
 }
