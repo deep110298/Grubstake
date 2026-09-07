@@ -99,8 +99,8 @@ export default function MultiplayerGameBoard({
         <MPScoreboard state={display} />
 
         <div className="flex items-center justify-between">
-          <span className="mono-label text-xs text-ink-faint">
-            Joker rank: <span className="text-accent">{display.jokerRank}</span>
+          <span className="mono-label inline-flex items-center gap-1.5 rounded-full bg-accent-tint px-3 py-1.5 text-sm font-semibold text-accent">
+            🃏 Wild card: {display.jokerRank}
           </span>
           <button
             type="button"

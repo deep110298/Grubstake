@@ -25,11 +25,11 @@ export default function RulesModal({
           <p><strong className="text-ink">Card values:</strong> number cards count as their face value. Aces count as 1. Face cards (J, Q, K) count as 10. A Joker card is always worth 0.</p>
         )}
         {isComputer ? (
-          <p><strong className="text-ink">Joker:</strong> each round one card is set aside at random and its rank becomes that round&apos;s joker. Any card of that rank is worth 0, for everyone.</p>
+          <p><strong className="text-ink">Wild card:</strong> each round one card is set aside at random and its rank becomes that round&apos;s wild card. Any card of that rank is worth 0, for everyone.</p>
         ) : (
           <>
             <p><strong className="text-ink">Deck:</strong> a 2-player room plays with one deck (52 cards + 1 Joker); 3 or more players play with two decks shuffled together (104 cards + 2 Jokers).</p>
-            <p><strong className="text-ink">Joker rank:</strong> each round one card is set aside at random and its rank becomes that round&apos;s wild rank — any card of that rank is worth 0, on top of the Joker card(s) always being worth 0. If the card set aside is itself a Joker, the wild rank defaults to Ace.</p>
+            <p><strong className="text-ink">Wild card rank:</strong> each round one card is set aside at random and its rank becomes that round&apos;s wild card — any card of that rank is worth 0, on top of the Joker card(s) always being worth 0. If the card set aside is itself a Joker, the wild card defaults to Ace.</p>
           </>
         )}
         <p><strong className="text-ink">Your turn:</strong> choose a card from your hand and play it onto the discard pile. If its rank matches the pile&apos;s current top card, that&apos;s it — your turn ends and your hand is one card smaller. If it doesn&apos;t match, you then draw a replacement: either blind from the deck, or by taking the specific card that was on top of the pile before you played.</p>
