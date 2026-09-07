@@ -7,8 +7,8 @@ export default function Scoreboard({ state }: { state: GameState }) {
       <div className="mono-label flex flex-col items-center gap-1 text-center text-[11px] leading-tight text-ink-muted">
         <div>Round {state.roundNumber}</div>
         <div className="text-ink-soft">Target {state.target}</div>
-        <div className="mt-0.5 rounded-full border border-wild/40 bg-wild/[0.14] px-2.5 py-0.5 text-[10px] text-wild">
-          Wild · {state.jokerRank}
+        <div className="mt-0.5 rounded-full bg-wild px-3 py-1 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
+          WILD · {state.jokerRank}
         </div>
       </div>
       <ScoreBlock label="Computer" score={state.scores.computer} active={state.turn === 'computer'} align="right" />

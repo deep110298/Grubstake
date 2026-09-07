@@ -17,6 +17,7 @@
   --accent-shadow: #075158;
 
   --wild: #c2367f;
+  --wild-shadow: #8f2861;
 
   --suit-red: #d8324a;
   --error: #d8324a;
@@ -54,6 +55,7 @@
   --color-accent-shadow: var(--accent-shadow);
 
   --color-wild: var(--wild);
+  --color-wild-shadow: var(--wild-shadow);
 
   --color-suit-red: var(--suit-red);
   --color-error: var(--error);

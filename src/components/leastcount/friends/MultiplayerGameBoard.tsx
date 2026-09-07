@@ -15,7 +15,7 @@ import {
 import type { MPGameState } from '@/lib/multiplayer/types';
 import PlayingCard, { CardBack } from '@/components/leastcount/PlayingCard';
 import RulesModal from '@/components/leastcount/RulesModal';
-import WildCardAnnouncement from '@/components/leastcount/WildCardAnnouncement';
+import WildCardRevealModal from '@/components/leastcount/WildCardRevealModal';
 import MPScoreboard from './MPScoreboard';
 import MPRoundEndModal from './MPRoundEndModal';
 import MPGameOverModal from './MPGameOverModal';
@@ -97,15 +97,15 @@ export default function MultiplayerGameBoard({
 
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
-      <WildCardAnnouncement jokerRank={state.jokerRank} />
+      <WildCardRevealModal jokerRank={state.jokerRank} />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
         <div className="flex items-center justify-between">
           <span className="mono-label text-[11px] text-ink-muted">
             {code ? `Room ${code} · ` : ''}Round {display.roundNumber}
           </span>
           <div className="flex items-center gap-2.5">
-            <span className="mono-label inline-flex items-center gap-2 rounded-full border border-wild/40 bg-wild/[0.14] px-3 py-1.5 text-[11px] text-wild">
-              Wild · {display.jokerRank}
+            <span className="mono-label inline-flex items-center gap-2 rounded-full bg-wild px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
+              WILD · {display.jokerRank}
             </span>
             <button
               type="button"
