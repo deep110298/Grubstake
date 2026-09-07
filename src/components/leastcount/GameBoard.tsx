@@ -78,18 +78,13 @@ export default function GameBoard() {
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
         <Scoreboard state={state} />
 
-        <div className="flex items-center justify-between">
-          <span className="mono-label inline-flex items-center gap-2 rounded-full border border-wild/40 bg-wild/[0.14] px-3.5 py-1.5 text-xs text-wild">
-            Wild card · {state.jokerRank}
-          </span>
-          <button
-            type="button"
-            onClick={() => setShowRules(true)}
-            className="mono-label text-[11px] text-ink-muted hover:text-ink"
-          >
-            Rules
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowRules(true)}
+          className="mono-label -mt-2 self-end text-[11px] text-ink-muted hover:text-ink"
+        >
+          Rules
+        </button>
 
         <section className="flex flex-col items-center gap-2 pt-1">
           <span className="mono-label text-[11px] text-ink-muted">Computer · {state.hands.computer.length} cards</span>

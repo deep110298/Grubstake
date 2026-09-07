@@ -18,8 +18,8 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
   const [showRules, setShowRules] = useState(false);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-canvas px-6 pb-5 pt-1.5 text-ink">
-      <div className="flex items-center justify-between">
+    <div className="flex min-h-dvh flex-col items-center bg-canvas px-6 pb-5 pt-1.5 text-ink">
+      <div className="flex w-full max-w-sm items-center justify-between">
         <Link href="/" className="mono-label text-xs text-ink-muted hover:text-ink">
           ← Home
         </Link>
@@ -32,7 +32,7 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col gap-4 pt-5">
+      <div className="flex w-full max-w-sm flex-1 flex-col gap-4 pt-5">
         <div className="flex flex-col gap-2">
           <h1 className="font-display text-[34px] font-extrabold leading-tight tracking-tight">Play vs Computer</h1>
           <p className="text-[15px] leading-relaxed text-ink-muted">

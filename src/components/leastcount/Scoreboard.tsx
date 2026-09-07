@@ -4,9 +4,12 @@ export default function Scoreboard({ state }: { state: GameState }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-[20px] border border-hairline bg-surface-sunken px-[18px] py-3.5">
       <ScoreBlock label="You" score={state.scores.player} active={state.turn === 'player'} />
-      <div className="mono-label text-center text-[11px] leading-relaxed text-ink-muted">
+      <div className="mono-label flex flex-col items-center gap-1 text-center text-[11px] leading-tight text-ink-muted">
         <div>Round {state.roundNumber}</div>
         <div className="text-ink-soft">Target {state.target}</div>
+        <div className="mt-0.5 rounded-full border border-wild/40 bg-wild/[0.14] px-2.5 py-0.5 text-[10px] text-wild">
+          Wild · {state.jokerRank}
+        </div>
       </div>
       <ScoreBlock label="Computer" score={state.scores.computer} active={state.turn === 'computer'} align="right" />
     </div>

@@ -55,16 +55,16 @@ export default function Lobby({
   const openSeats = room.max_players - players.length;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-canvas px-6 pb-5 pt-1.5 text-ink">
+    <div className="flex min-h-dvh flex-col items-center bg-canvas px-6 pb-5 pt-1.5 text-ink">
       <button
         type="button"
         onClick={() => router.push('/')}
-        className="mono-label self-start text-xs text-ink-muted hover:text-ink"
+        className="mono-label w-full max-w-sm self-center text-xs text-ink-muted hover:text-ink"
       >
         ← Leave room
       </button>
 
-      <div className="flex flex-1 flex-col gap-3.5 pt-4.5">
+      <div className="flex w-full max-w-sm flex-1 flex-col gap-3.5 pt-4.5">
         <div className="flex flex-col items-center gap-2 rounded-[22px] border border-hairline bg-surface-sunken p-4">
           <span className="mono-label text-[11px] text-ink-muted">Room code</span>
           <span className="font-mono text-4xl font-bold leading-none tracking-[0.14em] text-accent">{room.code}</span>
