@@ -1,48 +1,49 @@
-import { createDeck, drawFromPile, handValue, shuffle } from '@/lib/leastCount/deck';
-import { HAND_SIZE, INCORRECT_CALL_PENALTY } from '@/lib/leastCount/engine';
+import { createDeck, decksForPlayerCount, handValue, shuffle } from './deck';
+import { drawFromPile } from '@/lib/leastCount/deck';
 import type { Rank } from '@/lib/leastCount/types';
 import type { MPGameState, MPRoundResult } from './types';
 
-export { HAND_SIZE, INCORRECT_CALL_PENALTY };
+export const HAND_SIZE = 7;
+export const INCORRECT_CALL_PENALTY = 40;
+export const DECLARE_THRESHOLD = 10;
 
 /*
- * This is a friends-multiplayer extension of the verified 2-player Least
- * Count rules (see src/lib/leastCount/engine.ts) generalized to 2-4 players.
- * The original game (and its source) only ever defines "you vs the
- * computer," so two things had to be extrapolated for N players:
- *
- * - Tie-break on a call: the 2-player source scores an exact tie as a win
- *   for the computer specifically, which has no meaning without a
- *   computer. Here a call is correct whenever the caller's hand is AT
- *   LEAST as low as everyone else's (ties favor the caller).
- * - Scoring on a wrong call: the source only ever touches the wrong
- *   caller's score (+40) and leaves the other player untouched. That
- *   generalizes directly — on a wrong call, only the caller's score
- *   changes; on a correct call, everyone except the caller scores their
- *   actual hand value, same as the 2-player version.
+ * A friends-multiplayer implementation of Least Count for 2-6 players,
+ * matching the commonly-played rules (see sohels.medium.com/how-to-play-
+ * least-count-905519066ef4), which is a different — and for 3+ players,
+ * more complete — ruleset than ckoppula199's 2-player source the
+ * vs-computer mode (src/lib/leastCount/) is built from. The two engines
+ * are intentionally independent: different hand size, card values, and
+ * calling/scoring rules.
  */
 
-function nextSeat(seats: string[], current: string): string {
-  const index = seats.indexOf(current);
-  return seats[(index + 1) % seats.length];
+function nextSeat(activeSeats: string[], current: string): string {
+  const index = activeSeats.indexOf(current);
+  return activeSeats[(index + 1) % activeSeats.length];
 }
 
 function dealRound(
   seats: string[],
+  activeSeats: string[],
+  eliminated: string[],
   names: Record<string, string>,
   target: number,
   scores: Record<string, number>,
   roundNumber: number
 ): MPGameState {
-  const deck = shuffle(createDeck());
+  const numDecks = decksForPlayerCount(seats.length);
+  const deck = shuffle(createDeck(numDecks));
 
-  const jokerIndex = Math.floor(Math.random() * deck.length);
-  const jokerRank: Rank = deck[jokerIndex].rank;
-  const pool = [...deck.slice(0, jokerIndex), ...deck.slice(jokerIndex + 1)];
+  // Reveal a card to fix this round's wild rank; if the reveal is itself a
+  // Joker (which has no rank of its own), the wild rank defaults to Ace.
+  const revealIndex = Math.floor(Math.random() * deck.length);
+  const revealed = deck[revealIndex];
+  const jokerRank: Rank = revealed.rank === 'JOKER' ? 'A' : revealed.rank;
+  const pool = [...deck.slice(0, revealIndex), ...deck.slice(revealIndex + 1)];
 
   const hands: Record<string, typeof pool> = {};
   let cursor = 0;
-  for (const seat of seats) {
+  for (const seat of activeSeats) {
     hands[seat] = pool.slice(cursor, cursor + HAND_SIZE);
     cursor += HAND_SIZE;
   }
@@ -52,6 +53,8 @@ function dealRound(
 
   return {
     seats,
+    activeSeats,
+    eliminated,
     names,
     target,
     roundNumber,
@@ -60,7 +63,7 @@ function dealRound(
     discardPile: [faceUp],
     hands,
     scores,
-    turn: seats[(roundNumber - 1) % seats.length],
+    turn: activeSeats[(roundNumber - 1) % activeSeats.length],
     phase: 'awaiting-action',
     pendingPickup: null,
     lastRoundResult: null,
@@ -70,15 +73,20 @@ function dealRound(
 
 export function newMultiplayerGame(seats: string[], names: Record<string, string>, target: number): MPGameState {
   const scores = Object.fromEntries(seats.map((seat) => [seat, 0]));
-  return dealRound(seats, names, target, scores, 1);
+  return dealRound(seats, seats, [], names, target, scores, 1);
 }
 
 export function startNextRound(state: MPGameState): MPGameState {
-  return dealRound(state.seats, state.names, state.target, state.scores, state.roundNumber + 1);
+  return dealRound(state.seats, state.activeSeats, state.eliminated, state.names, state.target, state.scores, state.roundNumber + 1);
 }
 
 export function canAct(state: MPGameState, playerId: string): boolean {
   return state.turn === playerId && state.phase === 'awaiting-action';
+}
+
+// You may only call once your hand totals DECLARE_THRESHOLD or less.
+export function canCall(state: MPGameState, playerId: string): boolean {
+  return canAct(state, playerId) && handValue(state.hands[playerId] ?? [], state.jokerRank) <= DECLARE_THRESHOLD;
 }
 
 export function canPlayCards(state: MPGameState, playerId: string, cardIds: string[]): boolean {
@@ -107,7 +115,7 @@ export function playCards(state: MPGameState, playerId: string, cardIds: string[
       ...state,
       hands,
       discardPile,
-      turn: nextSeat(state.seats, playerId),
+      turn: nextSeat(state.activeSeats, playerId),
       phase: 'awaiting-action',
       pendingPickup: null,
     };
@@ -136,7 +144,7 @@ export function drawReplacement(state: MPGameState, playerId: string, source: 'd
       ...state,
       hands: { ...state.hands, [playerId]: [...state.hands[playerId], pickup] },
       discardPile: state.discardPile.filter((c) => c.id !== pickup.id),
-      turn: nextSeat(state.seats, playerId),
+      turn: nextSeat(state.activeSeats, playerId),
       phase: 'awaiting-action',
       pendingPickup: null,
     };
@@ -148,55 +156,59 @@ export function drawReplacement(state: MPGameState, playerId: string, source: 'd
     drawPile,
     discardPile,
     hands: { ...state.hands, [playerId]: [...state.hands[playerId], card] },
-    turn: nextSeat(state.seats, playerId),
+    turn: nextSeat(state.activeSeats, playerId),
     phase: 'awaiting-action',
     pendingPickup: null,
   };
 }
 
 export function call(state: MPGameState, caller: string): MPGameState {
-  if (!canAct(state, caller)) return state;
+  if (!canCall(state, caller)) return state;
 
+  const participants = state.activeSeats;
   const values: Record<string, number> = {};
-  for (const seat of state.seats) values[seat] = handValue(state.hands[seat], state.jokerRank);
+  for (const seat of participants) values[seat] = handValue(state.hands[seat], state.jokerRank);
 
-  const lowest = Math.min(...state.seats.map((seat) => values[seat]));
-  const correct = values[caller] === lowest;
+  // The caller must be strictly the lowest — an exact tie counts against them.
+  const othersMin = Math.min(...participants.filter((s) => s !== caller).map((s) => values[s]));
+  const correct = values[caller] < othersMin;
 
-  const pointsAwarded: Record<string, number> = Object.fromEntries(state.seats.map((seat) => [seat, 0]));
+  const pointsAwarded: Record<string, number> = Object.fromEntries(participants.map((seat) => [seat, 0]));
   if (correct) {
-    for (const seat of state.seats) {
+    for (const seat of participants) {
       if (seat !== caller) pointsAwarded[seat] = values[seat];
     }
   } else {
     pointsAwarded[caller] = INCORRECT_CALL_PENALTY;
   }
 
-  const scores: Record<string, number> = {};
-  for (const seat of state.seats) scores[seat] = state.scores[seat] + pointsAwarded[seat];
+  const scores: Record<string, number> = { ...state.scores };
+  for (const seat of participants) scores[seat] += pointsAwarded[seat];
 
   const roundResult: MPRoundResult = {
+    participants,
     caller,
     correct,
     jokerRank: state.jokerRank,
-    hands: Object.fromEntries(state.seats.map((seat) => [seat, state.hands[seat]])),
+    hands: Object.fromEntries(participants.map((seat) => [seat, state.hands[seat]])),
     values,
     pointsAwarded,
   };
 
-  const reachedTarget = state.seats.some((seat) => scores[seat] >= state.target);
-  let winner: string | null = null;
-  if (reachedTarget) {
-    const minScore = Math.min(...state.seats.map((seat) => scores[seat]));
-    const winners = state.seats.filter((seat) => scores[seat] === minScore);
-    if (winners.length === 1) winner = winners[0];
-  }
+  // Anyone who reached the target this round stops playing; the rest
+  // continue next round. Once only one player is left, they win.
+  const busted = participants.filter((seat) => scores[seat] >= state.target);
+  const activeSeats = participants.filter((seat) => !busted.includes(seat));
+  const eliminated = [...state.eliminated, ...busted];
+  const winner = activeSeats.length === 1 ? activeSeats[0] : null;
 
   return {
     ...state,
     scores,
+    activeSeats,
+    eliminated,
     lastRoundResult: roundResult,
-    phase: reachedTarget && winner ? 'game-over' : 'round-end',
+    phase: winner ? 'game-over' : 'round-end',
     winner,
   };
 }

@@ -6,7 +6,7 @@ import { useState, useSyncExternalStore } from 'react';
 import { createRoom, joinRoom, RoomServiceError } from '@/lib/multiplayer/roomService';
 import { getPlayerId } from '@/lib/multiplayer/playerId';
 
-const PLAYER_OPTIONS = [2, 3, 4];
+const PLAYER_OPTIONS = [2, 3, 4, 5, 6];
 const TARGET_OPTIONS = [50, 100, 150];
 const NAME_STORAGE_KEY = 'leastcount_player_name';
 
@@ -157,13 +157,13 @@ export default function FriendsMenu() {
 
             <div>
               <div className="mono-label text-xs text-ink-faint">Players</div>
-              <div className="mt-1 flex gap-2">
+              <div className="mt-1 grid grid-cols-5 gap-2">
                 {PLAYER_OPTIONS.map((option) => (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setMaxPlayers(option)}
-                    className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`rounded-lg border px-2 py-2 text-sm font-medium transition-colors ${
                       maxPlayers === option
                         ? 'border-accent bg-accent-tint text-accent'
                         : 'border-hairline text-ink-muted hover:bg-surface-sunken'

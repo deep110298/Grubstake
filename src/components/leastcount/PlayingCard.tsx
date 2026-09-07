@@ -32,8 +32,10 @@ export default function PlayingCard({
   size = 'md',
   onClick,
 }: PlayingCardProps) {
-  const isRed = RED_SUITS.has(card.suit);
-  const isJoker = card.rank === jokerRank;
+  const isPhysicalJoker = card.rank === 'JOKER';
+  const isRed = !isPhysicalJoker && RED_SUITS.has(card.suit);
+  const isWildRank = card.rank === jokerRank;
+  const isZeroValue = isPhysicalJoker || isWildRank;
 
   return (
     <button
@@ -41,16 +43,22 @@ export default function PlayingCard({
       onClick={onClick}
       disabled={!onClick || disabled}
       className={`relative flex flex-shrink-0 flex-col items-center justify-center rounded-lg border bg-surface font-mono font-semibold shadow-sm transition-transform ${SIZE_CLASSES[size]} ${
-        isRed ? 'text-error' : 'text-ink'
+        isRed ? 'text-error' : isPhysicalJoker ? 'text-accent' : 'text-ink'
       } ${selected ? '-translate-y-2 border-accent ring-2 ring-accent' : 'border-hairline-card'} ${
         onClick && !disabled ? 'cursor-pointer hover:-translate-y-1' : ''
       } ${disabled ? 'opacity-50' : ''}`}
       aria-pressed={selected}
-      aria-label={`${card.rank} of ${card.suit}`}
+      aria-label={isPhysicalJoker ? 'Joker' : `${card.rank} of ${card.suit}`}
     >
-      <span className="leading-none">{card.rank}</span>
-      <span className="leading-none">{SUIT_SYMBOL[card.suit]}</span>
-      {isJoker && (
+      {isPhysicalJoker ? (
+        <span className="text-xs leading-tight">JOKER</span>
+      ) : (
+        <>
+          <span className="leading-none">{card.rank}</span>
+          <span className="leading-none">{SUIT_SYMBOL[card.suit]}</span>
+        </>
+      )}
+      {isZeroValue && (
         <span className="absolute -top-2 -right-2 rounded-full bg-accent px-1 text-[9px] font-bold leading-tight text-white">
           0
         </span>

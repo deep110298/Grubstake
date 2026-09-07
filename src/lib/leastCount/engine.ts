@@ -3,6 +3,7 @@ import type { GameState, PlayerId, Rank, RoundResult } from './types';
 
 export const HAND_SIZE = 5;
 export const INCORRECT_CALL_PENALTY = 40;
+export const DECLARE_THRESHOLD = 10;
 
 const OTHER: Record<PlayerId, PlayerId> = { player: 'computer', computer: 'player' };
 
@@ -127,8 +128,13 @@ export function drawReplacement(state: GameState, playerId: PlayerId, source: 'd
   };
 }
 
+// You may only declare when your hand's value is 10 or less.
+export function canCall(state: GameState, playerId: PlayerId): boolean {
+  return canAct(state, playerId) && handValue(state.hands[playerId], state.jokerRank) <= DECLARE_THRESHOLD;
+}
+
 export function call(state: GameState, caller: PlayerId): GameState {
-  if (!canAct(state, caller)) return state;
+  if (!canCall(state, caller)) return state;
 
   const values: Record<PlayerId, number> = {
     player: handValue(state.hands.player, state.jokerRank),

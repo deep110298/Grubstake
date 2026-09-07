@@ -27,22 +27,28 @@ export default function MPRoundEndModal({
       </p>
 
       <div className="mt-4 space-y-3">
-        {state.seats.map((seat) => (
-          <div key={seat} className="rounded-lg border border-hairline bg-surface-sunken p-3">
-            <div className="flex items-baseline justify-between">
-              <span className="text-sm font-medium text-ink">{state.names[seat]}</span>
-              <span className="text-xs text-ink-muted">
-                hand: {result.values[seat]} &middot;{' '}
-                <span className="font-semibold text-ink">+{result.pointsAwarded[seat]} pts</span>
-              </span>
+        {result.participants.map((seat) => {
+          const justEliminated = state.eliminated.includes(seat);
+          return (
+            <div key={seat} className="rounded-lg border border-hairline bg-surface-sunken p-3">
+              <div className="flex items-baseline justify-between">
+                <span className="text-sm font-medium text-ink">
+                  {state.names[seat]}
+                  {justEliminated && <span className="mono-label ml-1.5 text-[10px] text-error">OUT</span>}
+                </span>
+                <span className="text-xs text-ink-muted">
+                  hand: {result.values[seat]} &middot;{' '}
+                  <span className="font-semibold text-ink">+{result.pointsAwarded[seat]} pts</span>
+                </span>
+              </div>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {result.hands[seat].map((card) => (
+                  <PlayingCard key={card.id} card={card} jokerRank={result.jokerRank} size="sm" />
+                ))}
+              </div>
             </div>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {result.hands[seat].map((card) => (
-                <PlayingCard key={card.id} card={card} jokerRank={result.jokerRank} size="sm" />
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {isHost ? (

@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { computerTakeTurn } from '@/lib/leastCount/ai';
-import { sortHand } from '@/lib/leastCount/deck';
+import { handValue, sortHand } from '@/lib/leastCount/deck';
 import {
   call,
   canAct,
+  canCall,
   canDrawReplacement,
   canPlayCards,
+  DECLARE_THRESHOLD,
   drawReplacement,
   newGame,
   playCards,
@@ -44,6 +46,8 @@ export default function GameBoard() {
   const yourTurnToAct = canAct(state, 'player');
   const yourTurnToDraw = canDrawReplacement(state, 'player');
   const canPlaySelected = canPlayCards(state, 'player', selected);
+  const canCallNow = canCall(state, 'player');
+  const yourHandValue = handValue(state.hands.player, state.jokerRank);
   const discardTop = state.discardPile[state.discardPile.length - 1];
 
   function handleHandCardClick(cardId: string) {
@@ -61,6 +65,9 @@ export default function GameBoard() {
     if (state!.turn === 'computer') return 'Computer is playing…';
     if (yourTurnToDraw) return 'Doesn’t match — draw a replacement card.';
     if (selected.length > 0) return 'Tap "Play" to discard the selected card(s).';
+    if (yourTurnToAct && !canCallNow) {
+      return `Choose a card from your hand to play. (You need ${DECLARE_THRESHOLD} or less to call — you have ${yourHandValue}.)`;
+    }
     return 'Choose a card from your hand to play, or call Least Count.';
   }
 
@@ -166,7 +173,7 @@ export default function GameBoard() {
           </button>
           <button
             type="button"
-            disabled={!yourTurnToAct}
+            disabled={!canCallNow}
             onClick={() => setState((current) => (current ? call(current, 'player') : current))}
             className="flex-1 rounded-lg bg-accent px-4 py-2.5 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >

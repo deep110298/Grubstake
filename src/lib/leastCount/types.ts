@@ -13,7 +13,11 @@ export type Rank =
   | '10'
   | 'J'
   | 'Q'
-  | 'K';
+  | 'K'
+  // A physical Joker card (only used by the multiplayer engine, which plays
+  // with decks that include real Joker cards — the vs-computer engine never
+  // produces one).
+  | 'JOKER';
 
 export interface PlayingCard {
   id: string;

@@ -9,6 +9,7 @@ export type MPPhase =
 // Player ids here are the room player's stable `player_id` (a client-generated
 // UUID), not seat numbers, so a reload can rejoin the same seat.
 export interface MPRoundResult {
+  participants: string[]; // seats that played this round, in order — may include a seat just eliminated by it
   caller: string;
   correct: boolean;
   jokerRank: Rank;
@@ -18,11 +19,13 @@ export interface MPRoundResult {
 }
 
 export interface MPGameState {
-  seats: string[]; // player ids in turn order
+  seats: string[]; // the full, original roster — fixed for the whole game
+  activeSeats: string[]; // seats still playing, in turn order (subset of seats)
+  eliminated: string[]; // seats that have crossed the target and stopped playing
   names: Record<string, string>;
   target: number;
   roundNumber: number;
-  jokerRank: Rank;
+  jokerRank: Rank; // this round's wild rank (never 'JOKER' itself — see engine.ts)
   drawPile: PlayingCard[];
   discardPile: PlayingCard[];
   hands: Record<string, PlayingCard[]>;

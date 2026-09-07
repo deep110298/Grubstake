@@ -1,17 +1,16 @@
 import { cardValue, handValue } from './deck';
-import { call, canPlayCards, drawReplacement, playCards } from './engine';
+import { call, canPlayCards, DECLARE_THRESHOLD, drawReplacement, playCards } from './engine';
 import type { GameState, PlayingCard, Rank } from './types';
 
-// The lower a hand's value, the more likely the computer calls. (The
-// original game intended this graduated escalation, but an ordering bug in
-// its condition chain meant only the loosest bracket ever ran; this fixes
-// the ordering while keeping the same brackets and odds.)
+// You may only ever call at DECLARE_THRESHOLD or below, so the computer
+// never rolls for it above that — but the lower under that ceiling its hand
+// is, the likelier it calls rather than pushing its luck for a zero.
 function callChance(handTotal: number): number {
-  if (handTotal < 10) return 1;
-  if (handTotal < 12) return 6 / 11;
-  if (handTotal < 16) return 4 / 10;
-  if (handTotal < 20) return 3 / 11;
-  return 0;
+  if (handTotal > DECLARE_THRESHOLD) return 0;
+  if (handTotal === 0) return 1;
+  if (handTotal <= 3) return 0.85;
+  if (handTotal <= 6) return 0.55;
+  return 0.3;
 }
 
 // Take the discard pile's offered card only if it's cheap; otherwise draw blind.
