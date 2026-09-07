@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase/client';
+import { getSupabase } from '@/lib/supabase/client';
 import { generateRoomCode } from './roomCodes';
 import type { MPGameState, Room, RoomPlayerRow } from './types';
 
@@ -11,6 +11,7 @@ export async function createRoom(options: {
   targetScore: number;
 }): Promise<string> {
   const { hostPlayerId, hostName, maxPlayers, targetScore } = options;
+  const supabase = getSupabase();
 
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = generateRoomCode();
@@ -44,6 +45,7 @@ export async function createRoom(options: {
 
 export async function joinRoom(options: { code: string; playerId: string; name: string }): Promise<void> {
   const code = options.code.trim().toUpperCase();
+  const supabase = getSupabase();
 
   const { data: room, error: roomError } = await supabase
     .from('rooms')
@@ -87,13 +89,13 @@ export async function joinRoom(options: { code: string; playerId: string; name: 
 }
 
 export async function getRoom(code: string): Promise<Room | null> {
-  const { data, error } = await supabase.from('rooms').select('*').eq('code', code).maybeSingle();
+  const { data, error } = await getSupabase().from('rooms').select('*').eq('code', code).maybeSingle();
   if (error) throw new RoomServiceError(error.message);
   return data as Room | null;
 }
 
 export async function getRoomPlayers(code: string): Promise<RoomPlayerRow[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('room_players')
     .select('*')
     .eq('room_code', code)
@@ -103,7 +105,7 @@ export async function getRoomPlayers(code: string): Promise<RoomPlayerRow[]> {
 }
 
 export async function startGame(code: string, initialState: MPGameState): Promise<void> {
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from('rooms')
     .update({ status: 'playing', game_state: initialState, updated_at: new Date().toISOString() })
     .eq('code', code);
@@ -111,7 +113,7 @@ export async function startGame(code: string, initialState: MPGameState): Promis
 }
 
 export async function updateGameState(code: string, state: MPGameState): Promise<void> {
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from('rooms')
     .update({
       game_state: state,
@@ -123,6 +125,7 @@ export async function updateGameState(code: string, state: MPGameState): Promise
 }
 
 export function subscribeToRoom(code: string, onChange: () => void): () => void {
+  const supabase = getSupabase();
   const channel = supabase
     .channel(`room:${code}`)
     .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms', filter: `code=eq.${code}` }, onChange)
