@@ -15,7 +15,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Least Count",
+  title: "Least Count App",
   description:
     "Play Least Count against the computer: keep your hand low, call it, and win.",
 };

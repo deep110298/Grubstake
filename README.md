@@ -1,4 +1,4 @@
-# Least Count
+# Least Count App
 
 Play the card game Least Count in the browser — against the computer, or
 with friends in a shared room.
@@ -6,9 +6,10 @@ with friends in a shared room.
 Keep your hand's total value low, call it when you think you're the lowest,
 and beat the table to the target score. The vs-computer rules are matched to
 [ckoppula199/Least-Count-Card-Game](https://github.com/ckoppula199/Least-Count-Card-Game),
-the original text-based Java implementation; the friends mode generalizes
-those same rules to 2-4 human players (see `src/lib/multiplayer/engine.ts`
-for the specifics that had to be extrapolated).
+the original text-based Java implementation; the friends mode uses the
+commonly-played standard rules for 2-6 human players instead (see
+`src/lib/multiplayer/engine.ts` for specifics, including the Joker cards,
+declare threshold, and player-elimination endgame that come with it).
 
 ## Getting Started
 
@@ -35,6 +36,6 @@ browser in a room see moves as they happen.
 - Next.js (App Router) + Tailwind, mobile-first
 - Solo game engine (`src/lib/leastCount/`): deck/card values, joker rank, turn resolution, calling and scoring for 2 players (you vs. computer)
 - Computer opponent (`src/lib/leastCount/ai.ts`): a simple heuristic AI with graduated odds of calling as its hand value drops
-- Multiplayer engine (`src/lib/multiplayer/engine.ts`): the same rules generalized to 2-4 players, used by friend rooms
+- Multiplayer engine (`src/lib/multiplayer/engine.ts`): the standard Least Count rules for 2-6 players, used by friend rooms
 - Rooms (`src/lib/multiplayer/`, backed by Supabase Postgres + Realtime): room codes, joining, and syncing game state between browsers — no accounts, just a per-browser id in localStorage
 - UI (`src/components/leastcount/`): setup screen, game board, round/game-over modals, and (`friends/`) the room lobby and multiplayer board

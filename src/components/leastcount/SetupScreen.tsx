@@ -16,7 +16,7 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
         ← Home
       </Link>
       <div>
-        <h1 className="text-3xl font-semibold text-ink">Least Count</h1>
+        <h1 className="text-3xl font-semibold text-ink">Least Count App</h1>
         <p className="mt-2 max-w-xs text-sm text-ink-muted">
           Keep your hand&apos;s value low, call when you think you&apos;re lowest, and beat the computer to the finish.
         </p>
