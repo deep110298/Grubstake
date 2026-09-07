@@ -6,13 +6,11 @@ import { sortHand } from '@/lib/leastCount/deck';
 import {
   call,
   canAct,
-  canDiscard,
-  canPlaySet,
-  discardCard,
-  drawFromDeck,
-  drawFromDiscard,
+  canDrawReplacement,
+  canPlayCards,
+  drawReplacement,
   newGame,
-  playSet,
+  playCards,
   startNextRound,
 } from '@/lib/leastCount/engine';
 import type { GameState } from '@/lib/leastCount/types';
@@ -44,36 +42,32 @@ export default function GameBoard() {
   }
 
   const yourTurnToAct = canAct(state, 'player');
-  const yourTurnToDiscard = canDiscard(state, 'player');
-  const canCallNow = yourTurnToAct;
-  const canPlaySelectedSet = canPlaySet(state, 'player', selected);
+  const yourTurnToDraw = canDrawReplacement(state, 'player');
+  const canPlaySelected = canPlayCards(state, 'player', selected);
+  const discardTop = state.discardPile[state.discardPile.length - 1];
 
   function handleHandCardClick(cardId: string) {
-    if (yourTurnToDiscard) {
-      setState((current) => (current ? discardCard(current, 'player', cardId) : current));
-      setSelected([]);
-      return;
-    }
-    if (yourTurnToAct) {
-      setSelected((current) =>
-        current.includes(cardId) ? current.filter((id) => id !== cardId) : [...current, cardId]
-      );
-    }
+    if (!yourTurnToAct) return;
+    setSelected((current) => {
+      if (current.includes(cardId)) return current.filter((id) => id !== cardId);
+      const card = state!.hands.player.find((c) => c.id === cardId);
+      const first = state!.hands.player.find((c) => c.id === current[0]);
+      if (first && card && first.rank !== card.rank) return [cardId];
+      return [...current, cardId];
+    });
   }
 
   function statusText(): string {
     if (state!.turn === 'computer') return 'Computer is playing…';
-    if (yourTurnToDiscard) return 'Choose a card to discard.';
-    if (selected.length > 0) return 'Tap "Play set" to discard matching cards, or keep choosing.';
-    return 'Draw from the deck or discard pile, play a set, or call Least Count.';
+    if (yourTurnToDraw) return 'Doesn’t match — draw a replacement card.';
+    if (selected.length > 0) return 'Tap "Play" to discard the selected card(s).';
+    return 'Choose a card from your hand to play, or call Least Count.';
   }
 
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-4 py-4">
-        <div className="flex items-center justify-between">
-          <Scoreboard state={state} />
-        </div>
+        <Scoreboard state={state} />
 
         <div className="flex items-center justify-between">
           <span className="mono-label text-xs text-ink-faint">
@@ -98,33 +92,46 @@ export default function GameBoard() {
         </section>
 
         <section className="flex flex-1 items-center justify-center gap-6">
-          <div className="flex flex-col items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setState((current) => (current ? drawFromDeck(current, 'player') : current))}
-              disabled={!yourTurnToAct}
-              className="disabled:cursor-not-allowed disabled:opacity-60"
-              aria-label="Draw from deck"
-            >
-              <CardBack size="lg" />
-            </button>
-            <span className="mono-label text-[11px] text-ink-faint">Deck ({state.drawPile.length})</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1.5">
-            {state.discardPile.length > 0 ? (
-              <PlayingCard
-                card={state.discardPile[state.discardPile.length - 1]}
-                jokerRank={state.jokerRank}
-                size="lg"
-                disabled={!yourTurnToAct}
-                onClick={() => setState((current) => (current ? drawFromDiscard(current, 'player') : current))}
-              />
-            ) : (
-              <div className="h-24 w-16 rounded-lg border border-dashed border-hairline" />
-            )}
-            <span className="mono-label text-[11px] text-ink-faint">Discard</span>
-          </div>
+          {yourTurnToDraw ? (
+            <>
+              <div className="flex flex-col items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setState((current) => (current ? drawReplacement(current, 'player', 'deck') : current))}
+                  aria-label="Draw from deck"
+                >
+                  <CardBack size="lg" />
+                </button>
+                <span className="mono-label text-[11px] text-ink-faint">Deck ({state.drawPile.length})</span>
+              </div>
+              {state.pendingPickup && (
+                <div className="flex flex-col items-center gap-1.5">
+                  <PlayingCard
+                    card={state.pendingPickup}
+                    jokerRank={state.jokerRank}
+                    size="lg"
+                    onClick={() => setState((current) => (current ? drawReplacement(current, 'player', 'pickup') : current))}
+                  />
+                  <span className="mono-label text-[11px] text-ink-faint">Take this card</span>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col items-center gap-1.5">
+                <CardBack size="lg" />
+                <span className="mono-label text-[11px] text-ink-faint">Deck ({state.drawPile.length})</span>
+              </div>
+              <div className="flex flex-col items-center gap-1.5">
+                {discardTop ? (
+                  <PlayingCard card={discardTop} jokerRank={state.jokerRank} size="lg" />
+                ) : (
+                  <div className="h-24 w-16 rounded-lg border border-dashed border-hairline" />
+                )}
+                <span className="mono-label text-[11px] text-ink-faint">Discard</span>
+              </div>
+            </>
+          )}
         </section>
 
         <p className="text-center text-sm text-ink-muted">{statusText()}</p>
@@ -138,7 +145,7 @@ export default function GameBoard() {
                 card={card}
                 jokerRank={state.jokerRank}
                 selected={selected.includes(card.id)}
-                disabled={!yourTurnToAct && !yourTurnToDiscard}
+                disabled={!yourTurnToAct}
                 onClick={() => handleHandCardClick(card.id)}
               />
             ))}
@@ -146,22 +153,20 @@ export default function GameBoard() {
         </section>
 
         <div className="flex gap-2 pb-2">
-          {selected.length >= 2 && (
-            <button
-              type="button"
-              disabled={!canPlaySelectedSet}
-              onClick={() => {
-                setState((current) => (current ? playSet(current, 'player', selected) : current));
-                setSelected([]);
-              }}
-              className="flex-1 rounded-lg border border-accent px-4 py-2.5 font-medium text-accent transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Play set ({selected.length})
-            </button>
-          )}
           <button
             type="button"
-            disabled={!canCallNow}
+            disabled={selected.length === 0 || !canPlaySelected}
+            onClick={() => {
+              setState((current) => (current ? playCards(current, 'player', selected) : current));
+              setSelected([]);
+            }}
+            className="flex-1 rounded-lg border border-accent px-4 py-2.5 font-medium text-accent transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Play {selected.length > 1 ? `(${selected.length})` : 'card'}
+          </button>
+          <button
+            type="button"
+            disabled={!yourTurnToAct}
             onClick={() => setState((current) => (current ? call(current, 'player') : current))}
             className="flex-1 rounded-lg bg-accent px-4 py-2.5 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
           >

@@ -8,12 +8,17 @@ const OTHER: Record<PlayerId, PlayerId> = { player: 'computer', computer: 'playe
 
 function dealRound(target: number, scores: Record<PlayerId, number>, roundNumber: number): GameState {
   const deck = shuffle(createDeck());
-  const jokerRank: Rank = deck[Math.floor(Math.random() * deck.length)].rank;
 
-  const playerHand = deck.slice(0, HAND_SIZE);
-  const computerHand = deck.slice(HAND_SIZE, HAND_SIZE * 2);
-  const faceUp = deck[HAND_SIZE * 2];
-  const drawPile = deck.slice(HAND_SIZE * 2 + 1);
+  // One card is drawn out of the deck to fix the joker rank for the round —
+  // that specific card is set aside and isn't dealt or drawn this round.
+  const jokerIndex = Math.floor(Math.random() * deck.length);
+  const jokerRank: Rank = deck[jokerIndex].rank;
+  const pool = [...deck.slice(0, jokerIndex), ...deck.slice(jokerIndex + 1)];
+
+  const playerHand = pool.slice(0, HAND_SIZE);
+  const computerHand = pool.slice(HAND_SIZE, HAND_SIZE * 2);
+  const faceUp = pool[HAND_SIZE * 2];
+  const drawPile = pool.slice(HAND_SIZE * 2 + 1);
 
   return {
     target,
@@ -25,6 +30,7 @@ function dealRound(target: number, scores: Record<PlayerId, number>, roundNumber
     scores,
     turn: roundNumber % 2 === 1 ? 'player' : 'computer',
     phase: 'awaiting-action',
+    pendingPickup: null,
     lastRoundResult: null,
     winner: null,
   };
@@ -40,7 +46,11 @@ export function startNextRound(state: GameState): GameState {
 
 // Draws the top card of the draw pile, reshuffling the discard pile
 // (keeping its top card in play) if the draw pile has run out.
-function takeFromDrawPile(state: GameState): { card: PlayingCard; drawPile: PlayingCard[]; discardPile: PlayingCard[] } {
+function takeFromDrawPile(state: Pick<GameState, 'drawPile' | 'discardPile'>): {
+  card: PlayingCard;
+  drawPile: PlayingCard[];
+  discardPile: PlayingCard[];
+} {
   let drawPile = state.drawPile;
   let discardPile = state.discardPile;
 
@@ -58,97 +68,107 @@ export function canAct(state: GameState, playerId: PlayerId): boolean {
   return state.turn === playerId && state.phase === 'awaiting-action';
 }
 
-export function canDiscard(state: GameState, playerId: PlayerId): boolean {
-  return state.turn === playerId && state.phase === 'awaiting-discard';
+export function canPlayCards(state: GameState, playerId: PlayerId, cardIds: string[]): boolean {
+  if (!canAct(state, playerId) || cardIds.length === 0) return false;
+  const hand = state.hands[playerId];
+  const cards = cardIds.map((id) => hand.find((c) => c.id === id));
+  if (cards.some((c) => !c)) return false;
+  const rank = cards[0]!.rank;
+  return cards.every((c) => c!.rank === rank);
 }
 
-export function drawFromDeck(state: GameState, playerId: PlayerId): GameState {
-  if (!canAct(state, playerId)) return state;
+// Plays one or more same-rank cards from hand onto the discard pile. If
+// their rank matches the pile's current top card, the turn ends immediately
+// and the hand shrinks. Otherwise a replacement draw is required next.
+export function playCards(state: GameState, playerId: PlayerId, cardIds: string[]): GameState {
+  if (!canPlayCards(state, playerId, cardIds)) return state;
+
+  const hand = state.hands[playerId];
+  const played = hand.filter((c) => cardIds.includes(c.id));
+  const remainingHand = hand.filter((c) => !cardIds.includes(c.id));
+  const previousTop = state.discardPile[state.discardPile.length - 1] ?? null;
+  const matched = previousTop !== null && previousTop.rank === played[0].rank;
+
+  const discardPile = [...state.discardPile, ...played];
+  const hands = { ...state.hands, [playerId]: remainingHand };
+
+  if (matched) {
+    return {
+      ...state,
+      hands,
+      discardPile,
+      turn: OTHER[playerId],
+      phase: 'awaiting-action',
+      pendingPickup: null,
+    };
+  }
+
+  return {
+    ...state,
+    hands,
+    discardPile,
+    phase: 'awaiting-replacement-draw',
+    pendingPickup: previousTop,
+  };
+}
+
+export function canDrawReplacement(state: GameState, playerId: PlayerId): boolean {
+  return state.turn === playerId && state.phase === 'awaiting-replacement-draw';
+}
+
+// Completes a turn that needs a replacement card: either a blind draw from
+// the deck, or taking the specific card that was on top of the discard pile
+// before this turn's card(s) were played.
+export function drawReplacement(state: GameState, playerId: PlayerId, source: 'deck' | 'pickup'): GameState {
+  if (!canDrawReplacement(state, playerId)) return state;
+
+  if (source === 'pickup') {
+    const pickup = state.pendingPickup;
+    if (!pickup) return state;
+    return {
+      ...state,
+      hands: { ...state.hands, [playerId]: [...state.hands[playerId], pickup] },
+      discardPile: state.discardPile.filter((c) => c.id !== pickup.id),
+      turn: OTHER[playerId],
+      phase: 'awaiting-action',
+      pendingPickup: null,
+    };
+  }
+
   const { card, drawPile, discardPile } = takeFromDrawPile(state);
   return {
     ...state,
     drawPile,
     discardPile,
     hands: { ...state.hands, [playerId]: [...state.hands[playerId], card] },
-    phase: 'awaiting-discard',
-  };
-}
-
-export function drawFromDiscard(state: GameState, playerId: PlayerId): GameState {
-  if (!canAct(state, playerId) || state.discardPile.length === 0) return state;
-  const card = state.discardPile[state.discardPile.length - 1];
-  const discardPile = state.discardPile.slice(0, -1);
-  return {
-    ...state,
-    discardPile,
-    hands: { ...state.hands, [playerId]: [...state.hands[playerId], card] },
-    phase: 'awaiting-discard',
-  };
-}
-
-export function discardCard(state: GameState, playerId: PlayerId, cardId: string): GameState {
-  if (!canDiscard(state, playerId)) return state;
-  const hand = state.hands[playerId];
-  const card = hand.find((c) => c.id === cardId);
-  if (!card) return state;
-
-  return {
-    ...state,
-    hands: { ...state.hands, [playerId]: hand.filter((c) => c.id !== cardId) },
-    discardPile: [...state.discardPile, card],
     turn: OTHER[playerId],
     phase: 'awaiting-action',
+    pendingPickup: null,
   };
 }
 
-// A player holding two or more cards of the same rank may discard all of
-// them at once, drawing a single replacement card to finish their turn.
-export function canPlaySet(state: GameState, playerId: PlayerId, cardIds: string[]): boolean {
-  if (!canAct(state, playerId) || cardIds.length < 2) return false;
-  const hand = state.hands[playerId];
-  const cards = cardIds.map((id) => hand.find((c) => c.id === id)).filter((c): c is PlayingCard => !!c);
-  if (cards.length !== cardIds.length) return false;
-  return cards.every((c) => c.rank === cards[0].rank);
-}
-
-export function playSet(state: GameState, playerId: PlayerId, cardIds: string[]): GameState {
-  if (!canPlaySet(state, playerId, cardIds)) return state;
-  const hand = state.hands[playerId];
-  const remainingHand = hand.filter((c) => !cardIds.includes(c.id));
-  const playedCards = hand.filter((c) => cardIds.includes(c.id));
-
-  const { card, drawPile, discardPile } = takeFromDrawPile({
-    ...state,
-    discardPile: [...state.discardPile, ...playedCards],
-  });
-
-  return {
-    ...state,
-    drawPile,
-    discardPile,
-    hands: { ...state.hands, [playerId]: [...remainingHand, card] },
-    turn: OTHER[playerId],
-    phase: 'awaiting-action',
-  };
-}
-
-export function call(state: GameState, playerId: PlayerId): GameState {
-  if (!canAct(state, playerId)) return state;
+export function call(state: GameState, caller: PlayerId): GameState {
+  if (!canAct(state, caller)) return state;
 
   const values: Record<PlayerId, number> = {
     player: handValue(state.hands.player, state.jokerRank),
     computer: handValue(state.hands.computer, state.jokerRank),
   };
 
-  const opponent = OTHER[playerId];
-  const correct = values[playerId] <= values[opponent];
+  // A hand that ties the opponent's is scored as a computer win.
+  const roundWinner: PlayerId = values.player >= values.computer ? 'computer' : 'player';
+  const correct = caller === roundWinner;
 
-  const pointsAwarded: Record<PlayerId, number> = correct
-    ? { [playerId]: 0, [opponent]: values[opponent] } as Record<PlayerId, number>
-    : { [playerId]: INCORRECT_CALL_PENALTY, [opponent]: values[opponent] } as Record<PlayerId, number>;
+  const pointsAwarded: Record<PlayerId, number> = { player: 0, computer: 0 };
+  if (correct) {
+    const loser = OTHER[caller];
+    pointsAwarded[loser] = values[loser];
+  } else {
+    pointsAwarded[caller] = INCORRECT_CALL_PENALTY;
+  }
 
   const roundResult: RoundResult = {
-    caller: playerId,
+    caller,
     correct,
     jokerRank: state.jokerRank,
     hands: { player: state.hands.player, computer: state.hands.computer },

@@ -24,8 +24,8 @@ export interface PlayingCard {
 export type PlayerId = 'player' | 'computer';
 
 export type Phase =
-  | 'awaiting-action' // start of a turn: draw, play a set, or call
-  | 'awaiting-discard' // a card was drawn, must choose one to discard
+  | 'awaiting-action' // start of a turn: play card(s) from hand, or call
+  | 'awaiting-replacement-draw' // played card(s) didn't match the pile — must draw a replacement
   | 'round-end'
   | 'game-over';
 
@@ -48,6 +48,10 @@ export interface GameState {
   scores: Record<PlayerId, number>;
   turn: PlayerId;
   phase: Phase;
+  // The card that was on top of the discard pile before the current
+  // player's card(s) were played — offered as a known-value alternative to
+  // a blind draw while phase is 'awaiting-replacement-draw'.
+  pendingPickup: PlayingCard | null;
   lastRoundResult: RoundResult | null;
   winner: PlayerId | null;
 }

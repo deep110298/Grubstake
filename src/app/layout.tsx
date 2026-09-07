@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, IBM_Plex_Mono } from "next/font/google";
-import LeastCountLink from "@/components/LeastCountLink";
 import "./globals.css";
 
 const instrumentSans = Instrument_Sans({
@@ -16,9 +15,9 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Grubstake — Cook From What You Have",
+  title: "Least Count",
   description:
-    "Photograph what's in your fridge, freezer, and pantry, and get a recipe you can cook tonight.",
+    "Play Least Count against the computer: keep your hand low, call it, and win.",
 };
 
 export const viewport = {
@@ -35,7 +34,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-canvas text-ink font-sans">
         {children}
-        <LeastCountLink />
       </body>
     </html>
   );
