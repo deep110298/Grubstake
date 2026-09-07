@@ -24,9 +24,10 @@ export function shuffle<T>(items: T[]): T[] {
   return shuffled;
 }
 
-// Aces and face cards are worth 10, number cards keep their face value.
+// Aces are worth 1, number cards keep their face value, face cards are worth 10.
 export function baseCardValue(rank: Rank): number {
-  if (rank === 'A' || rank === 'J' || rank === 'Q' || rank === 'K') return 10;
+  if (rank === 'A') return 1;
+  if (rank === 'J' || rank === 'Q' || rank === 'K') return 10;
   return parseInt(rank, 10);
 }
 

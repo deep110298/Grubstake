@@ -20,7 +20,7 @@ export default function RulesModal({
       <div className="mt-3 space-y-3 text-sm text-ink-muted">
         <p>Everyone&apos;s dealt {handSize} cards. Lower is better — the goal is to keep your hand&apos;s total value low.</p>
         {isComputer ? (
-          <p><strong className="text-ink">Card values:</strong> number cards count as their face value. Aces and face cards (J, Q, K) count as 10.</p>
+          <p><strong className="text-ink">Card values:</strong> number cards count as their face value. Aces count as 1. Face cards (J, Q, K) count as 10.</p>
         ) : (
           <p><strong className="text-ink">Card values:</strong> number cards count as their face value. Aces count as 1. Face cards (J, Q, K) count as 10. A Joker card is always worth 0.</p>
         )}
