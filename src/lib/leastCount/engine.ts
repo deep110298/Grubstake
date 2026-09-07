@@ -1,5 +1,5 @@
-import { createDeck, handValue, shuffle } from './deck';
-import type { GameState, PlayerId, PlayingCard, Rank, RoundResult } from './types';
+import { createDeck, drawFromPile, handValue, shuffle } from './deck';
+import type { GameState, PlayerId, Rank, RoundResult } from './types';
 
 export const HAND_SIZE = 5;
 export const INCORRECT_CALL_PENALTY = 40;
@@ -42,26 +42,6 @@ export function newGame(target: number): GameState {
 
 export function startNextRound(state: GameState): GameState {
   return dealRound(state.target, state.scores, state.roundNumber + 1);
-}
-
-// Draws the top card of the draw pile, reshuffling the discard pile
-// (keeping its top card in play) if the draw pile has run out.
-function takeFromDrawPile(state: Pick<GameState, 'drawPile' | 'discardPile'>): {
-  card: PlayingCard;
-  drawPile: PlayingCard[];
-  discardPile: PlayingCard[];
-} {
-  let drawPile = state.drawPile;
-  let discardPile = state.discardPile;
-
-  if (drawPile.length === 0) {
-    const topCard = discardPile[discardPile.length - 1];
-    drawPile = shuffle(discardPile.slice(0, -1));
-    discardPile = [topCard];
-  }
-
-  const [card, ...rest] = drawPile;
-  return { card, drawPile: rest, discardPile };
 }
 
 export function canAct(state: GameState, playerId: PlayerId): boolean {
@@ -135,7 +115,7 @@ export function drawReplacement(state: GameState, playerId: PlayerId, source: 'd
     };
   }
 
-  const { card, drawPile, discardPile } = takeFromDrawPile(state);
+  const { card, drawPile, discardPile } = drawFromPile(state.drawPile, state.discardPile);
   return {
     ...state,
     drawPile,

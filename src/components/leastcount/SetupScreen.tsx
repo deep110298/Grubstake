@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import RulesModal from './RulesModal';
 
@@ -11,6 +12,9 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
 
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center gap-6 bg-canvas px-4 py-10 text-center">
+      <Link href="/" className="mono-label absolute left-4 top-4 text-xs text-ink-faint hover:text-ink">
+        ← Home
+      </Link>
       <div>
         <h1 className="text-3xl font-semibold text-ink">Least Count</h1>
         <p className="mt-2 max-w-xs text-sm text-ink-muted">

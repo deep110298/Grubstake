@@ -45,3 +45,23 @@ export function sortHand(hand: PlayingCard[]): PlayingCard[] {
     return RANKS.indexOf(a.rank) - RANKS.indexOf(b.rank);
   });
 }
+
+// Draws the top card of the draw pile, reshuffling the discard pile
+// (keeping its top card in play) if the draw pile has run out.
+export function drawFromPile(drawPile: PlayingCard[], discardPile: PlayingCard[]): {
+  card: PlayingCard;
+  drawPile: PlayingCard[];
+  discardPile: PlayingCard[];
+} {
+  let nextDrawPile = drawPile;
+  let nextDiscardPile = discardPile;
+
+  if (nextDrawPile.length === 0) {
+    const topCard = nextDiscardPile[nextDiscardPile.length - 1];
+    nextDrawPile = shuffle(nextDiscardPile.slice(0, -1));
+    nextDiscardPile = [topCard];
+  }
+
+  const [card, ...rest] = nextDrawPile;
+  return { card, drawPile: rest, discardPile: nextDiscardPile };
+}
