@@ -40,3 +40,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# capacitor native build output (the ios/ and android/ project sources themselves are committed)
+ios/App/Pods/
+ios/App/build/
+ios/App/DerivedData/
+ios/.build/
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/*.iml
+android/app/*.iml
