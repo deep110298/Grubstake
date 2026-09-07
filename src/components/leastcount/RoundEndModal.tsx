@@ -1,38 +1,66 @@
-import type { RoundResult } from '@/lib/leastCount/types';
+import type { GameState, RoundResult } from '@/lib/leastCount/types';
 import Modal from './Modal';
 import PlayingCard from './PlayingCard';
 
 export default function RoundEndModal({
+  state,
   result,
   onContinue,
 }: {
+  state: GameState;
   result: RoundResult;
   onContinue: () => void;
 }) {
-  const callerLabel = result.caller === 'player' ? 'You' : 'Computer';
+  const callerLabel = result.caller === 'player' ? 'you' : 'Computer';
 
   return (
     <Modal>
-      <h2 className="font-display text-lg font-semibold text-ink">
-        {result.correct ? `${callerLabel} called it right!` : `${callerLabel} called it wrong.`}
-      </h2>
-      <p className="mt-1 text-sm text-ink-muted">
-        {result.correct
-          ? `${callerLabel} had the lowest hand and scores 0 for this round.`
-          : `${callerLabel} didn't have the lowest hand and takes a penalty.`}
-      </p>
+      <div className="flex flex-col items-center gap-2 text-center">
+        <span className="mono-label rounded-full border border-accent/40 bg-accent/[0.14] px-4 py-1.5 text-[11px] text-accent">
+          Round {state.roundNumber} · {callerLabel} called
+        </span>
+        <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">
+          {result.correct ? 'Good call.' : 'Wrong call.'}
+        </h2>
+        <p className="max-w-[270px] text-sm leading-relaxed text-ink-muted">
+          {result.correct
+            ? `${result.caller === 'player' ? 'You' : callerLabel} had the lowest hand, so ${result.caller === 'player' ? 'you score' : 'they score'} nothing this round.`
+            : `${result.caller === 'player' ? 'You' : callerLabel} didn't have the lowest hand, so ${result.caller === 'player' ? 'you take' : 'they take'} the penalty.`}
+        </p>
+      </div>
 
-      <div className="mt-4 space-y-3">
-        <HandSummary label="Your hand" cards={result.hands.player} jokerRank={result.jokerRank} value={result.values.player} points={result.pointsAwarded.player} />
-        <HandSummary label="Computer's hand" cards={result.hands.computer} jokerRank={result.jokerRank} value={result.values.computer} points={result.pointsAwarded.computer} />
+      <div className="mt-5 flex flex-col gap-3">
+        <HandSummary
+          label="You"
+          cards={result.hands.player}
+          jokerRank={result.jokerRank}
+          value={result.values.player}
+          points={result.pointsAwarded.player}
+          highlighted={result.caller === 'player'}
+        />
+        <HandSummary
+          label="Computer"
+          cards={result.hands.computer}
+          jokerRank={result.jokerRank}
+          value={result.values.computer}
+          points={result.pointsAwarded.computer}
+          highlighted={result.caller === 'computer'}
+        />
+      </div>
+
+      <div className="mt-3 flex items-center justify-between rounded-2xl border border-hairline bg-surface-sunken px-[18px] py-3.5">
+        <span className="mono-label text-[11px] text-ink-muted">Running total</span>
+        <span className="font-display text-base font-bold text-ink">
+          {state.scores.player} <span className="text-ink-muted">·</span> {state.scores.computer}
+        </span>
       </div>
 
       <button
         type="button"
         onClick={onContinue}
-        className="mt-5 w-full rounded-lg bg-accent px-4 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+        className="mt-4 w-full rounded-2xl bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"
       >
-        Continue
+        Next round
       </button>
     </Modal>
   );
@@ -44,22 +72,26 @@ function HandSummary({
   jokerRank,
   value,
   points,
+  highlighted,
 }: {
   label: string;
   cards: RoundResult['hands']['player'];
   jokerRank: RoundResult['jokerRank'];
   value: number;
   points: number;
+  highlighted: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-hairline bg-surface-sunken p-3">
-      <div className="flex items-baseline justify-between">
-        <span className="text-sm font-medium text-ink">{label}</span>
-        <span className="text-xs text-ink-muted">
-          hand: {value} &middot; <span className="font-semibold text-ink">+{points} pts</span>
+    <div
+      className={`rounded-[18px] border p-4 ${highlighted ? 'border-accent bg-surface-sunken' : 'border-hairline bg-surface-sunken'}`}
+    >
+      <div className="flex items-center justify-between">
+        <span className={`mono-label text-[11px] ${highlighted ? 'text-accent' : 'text-ink-muted'}`}>
+          {label} · {value} pts
         </span>
+        <span className={`font-display text-lg font-bold ${points > 0 ? 'text-wild' : 'text-accent'}`}>+{points}</span>
       </div>
-      <div className="mt-2 flex flex-wrap gap-1.5">
+      <div className="mt-2.5 flex flex-wrap gap-1.5">
         {cards.map((card) => (
           <PlayingCard key={card.id} card={card} jokerRank={jokerRank} size="sm" />
         ))}

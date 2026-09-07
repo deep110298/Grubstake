@@ -1,31 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  --canvas: #faf8f4;
+  --canvas: #ffffff;
   --surface: #ffffff;
-  --surface-sunken: #f1eee7;
-  --surface-sunken-alt: #edeae3;
+  --surface-warm: #fdfbf7;
+  --surface-sunken: #faf8f6;
+  --surface-sunken-alt: #f7f5f3;
 
-  --ink: #191714;
-  --ink-muted: #6e6862;
-  --ink-faint: #8a837b;
+  --ink: #16141a;
+  --ink-soft: #45404b;
+  --ink-muted: #6f6a74;
+  --ink-faint: #8b8590;
   --ink-faintest: #a8a199;
 
-  --accent: #2f6b4f;
-  --accent-tint: #e7efe9;
-  --accent-muted: #7fa38f;
+  --accent: #0a6f78;
+  --accent-shadow: #075158;
 
-  --warn: #8a5209;
-  --warn-surface: #fbf1df;
-  --warn-border: rgba(180, 105, 14, 0.22);
-  --warn-border-strong: rgba(180, 105, 14, 0.28);
-  --warn-in-progress: #b4690e;
+  --wild: #c2367f;
 
-  --error: #b42318;
+  --suit-red: #d8324a;
+  --error: #d8324a;
 
-  --hairline: rgba(25, 23, 20, 0.08);
-  --hairline-card: rgba(25, 23, 20, 0.09);
-  --input-border: rgba(25, 23, 20, 0.14);
+  --hairline: #e8e5e1;
+  --hairline-card: #e7e3de;
+  --hairline-strong: #dedad5;
+  --input-border: #dedad5;
+
+  --card-back-a: #eae6e1;
+  --card-back-b: #f4f1ed;
+  --card-back-border: #ddd8d2;
 
   --photo-placeholder: repeating-linear-gradient(
     135deg,
@@ -37,31 +40,36 @@
 @theme inline {
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
+  --color-surface-warm: var(--surface-warm);
   --color-surface-sunken: var(--surface-sunken);
   --color-surface-sunken-alt: var(--surface-sunken-alt);
 
   --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
   --color-ink-muted: var(--ink-muted);
   --color-ink-faint: var(--ink-faint);
   --color-ink-faintest: var(--ink-faintest);
 
   --color-accent: var(--accent);
-  --color-accent-tint: var(--accent-tint);
-  --color-accent-muted: var(--accent-muted);
+  --color-accent-shadow: var(--accent-shadow);
 
-  --color-warn: var(--warn);
-  --color-warn-surface: var(--warn-surface);
-  --color-warn-in-progress: var(--warn-in-progress);
+  --color-wild: var(--wild);
 
+  --color-suit-red: var(--suit-red);
   --color-error: var(--error);
 
   --color-hairline: var(--hairline);
   --color-hairline-card: var(--hairline-card);
+  --color-hairline-strong: var(--hairline-strong);
   --color-input-border: var(--input-border);
 
-  --font-sans: var(--font-instrument-sans);
+  --color-card-back-a: var(--card-back-a);
+  --color-card-back-b: var(--card-back-b);
+  --color-card-back-border: var(--card-back-border);
+
+  --font-sans: var(--font-outfit);
   --font-mono: var(--font-ibm-plex-mono);
-  --font-display: var(--font-fredoka);
+  --font-display: var(--font-outfit);
 }
 
 body {
@@ -122,10 +130,25 @@ body {
   animation: fade-up 0.6s ease-out both;
 }
 
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-card,
   .hero-card-inner,
-  .fade-up {
+  .fade-up,
+  .pulse-dot {
     animation: none;
   }
 }

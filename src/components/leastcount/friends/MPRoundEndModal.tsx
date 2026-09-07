@@ -17,31 +17,41 @@ export default function MPRoundEndModal({
 
   return (
     <Modal>
-      <h2 className="font-display text-lg font-semibold text-ink">
-        {result.correct ? `${callerName} called it right!` : `${callerName} called it wrong.`}
-      </h2>
-      <p className="mt-1 text-sm text-ink-muted">
-        {result.correct
-          ? `${callerName} had the lowest hand and scores 0 for this round.`
-          : `${callerName} didn't have the lowest hand and takes a penalty.`}
-      </p>
+      <div className="flex flex-col items-center gap-2 text-center">
+        <span className="mono-label rounded-full border border-accent/40 bg-accent/[0.14] px-4 py-1.5 text-[11px] text-accent">
+          Round {state.roundNumber} · {callerName} called
+        </span>
+        <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">
+          {result.correct ? 'Good call.' : 'Wrong call.'}
+        </h2>
+        <p className="max-w-[270px] text-sm leading-relaxed text-ink-muted">
+          {result.correct
+            ? `${callerName} had the lowest hand and scores nothing this round.`
+            : `${callerName} didn't have the lowest hand and takes the penalty.`}
+        </p>
+      </div>
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-5 flex flex-col gap-3">
         {result.participants.map((seat) => {
           const justEliminated = state.eliminated.includes(seat);
+          const highlighted = seat === result.caller;
           return (
-            <div key={seat} className="rounded-lg border border-hairline bg-surface-sunken p-3">
-              <div className="flex items-baseline justify-between">
-                <span className="text-sm font-medium text-ink">
-                  {state.names[seat]}
-                  {justEliminated && <span className="mono-label ml-1.5 text-[10px] text-error">OUT</span>}
+            <div
+              key={seat}
+              className={`rounded-[18px] border p-4 ${highlighted ? 'border-accent bg-surface-sunken' : 'border-hairline bg-surface-sunken'}`}
+            >
+              <div className="flex items-center justify-between">
+                <span className={`mono-label text-[11px] ${highlighted ? 'text-accent' : 'text-ink-muted'}`}>
+                  {state.names[seat]} · {result.values[seat]} pts
+                  {justEliminated && <span className="ml-1.5 text-wild">OUT</span>}
                 </span>
-                <span className="text-xs text-ink-muted">
-                  hand: {result.values[seat]} &middot;{' '}
-                  <span className="font-semibold text-ink">+{result.pointsAwarded[seat]} pts</span>
+                <span
+                  className={`font-display text-lg font-bold ${result.pointsAwarded[seat] > 0 ? 'text-wild' : 'text-accent'}`}
+                >
+                  +{result.pointsAwarded[seat]}
                 </span>
               </div>
-              <div className="mt-2 flex flex-wrap gap-1.5">
+              <div className="mt-2.5 flex flex-wrap gap-1.5">
                 {result.hands[seat].map((card) => (
                   <PlayingCard key={card.id} card={card} jokerRank={result.jokerRank} size="sm" />
                 ))}
@@ -55,12 +65,12 @@ export default function MPRoundEndModal({
         <button
           type="button"
           onClick={onContinue}
-          className="mt-5 w-full rounded-lg bg-accent px-4 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+          className="mt-5 w-full rounded-2xl bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"
         >
-          Continue
+          Next round
         </button>
       ) : (
-        <p className="mt-5 text-sm text-ink-muted">Waiting for the host to continue…</p>
+        <p className="mt-5 text-center text-sm text-ink-muted">Waiting for the host to continue…</p>
       )}
     </Modal>
   );

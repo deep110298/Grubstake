@@ -17,23 +17,30 @@ export default function MPGameOverModal({
 
   return (
     <Modal>
-      <h2 className="font-display text-xl font-semibold text-ink">{winnerName ? `${winnerName} wins!` : 'Game over'}</h2>
-      <div className="mt-3 space-y-1">
+      <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">
+        {winnerName ? `${winnerName} wins!` : 'Game over'}
+      </h2>
+      <div className="mt-4 flex flex-col gap-1.5">
         {ranked.map((seat) => (
-          <div key={seat} className="flex items-center justify-between text-sm">
-            <span className={seat === state.winner ? 'font-semibold text-ink' : 'text-ink-muted'}>
+          <div
+            key={seat}
+            className={`flex items-center justify-between rounded-xl px-3.5 py-2 text-sm ${
+              seat === state.winner ? 'bg-accent/10' : ''
+            }`}
+          >
+            <span className={seat === state.winner ? 'font-bold text-accent' : 'text-ink-muted'}>
               {state.names[seat]}
             </span>
-            <span className="font-semibold text-ink">{state.scores[seat]}</span>
+            <span className="font-display font-bold text-ink">{state.scores[seat]}</span>
           </div>
         ))}
       </div>
-      <div className="mt-5 flex flex-col gap-2">
+      <div className="mt-5 flex flex-col gap-3">
         {isHost && (
           <button
             type="button"
             onClick={onPlayAgain}
-            className="w-full rounded-lg bg-accent px-4 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+            className="w-full rounded-2xl bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"
           >
             Play again
           </button>
@@ -41,7 +48,7 @@ export default function MPGameOverModal({
         <button
           type="button"
           onClick={onLeave}
-          className="w-full rounded-lg border border-hairline px-4 py-2.5 font-medium text-ink transition-colors hover:bg-surface-sunken"
+          className="w-full rounded-2xl border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
         >
           Leave room
         </button>

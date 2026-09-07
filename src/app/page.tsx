@@ -1,7 +1,10 @@
+'use client';
+
 import type { CSSProperties } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import Logo from '@/components/leastcount/Logo';
 import PlayingCard from '@/components/leastcount/PlayingCard';
+import RulesModal from '@/components/leastcount/RulesModal';
 
 const HERO_CARDS = [
   { id: 'hero-a', suit: 'spades', rank: 'A', tilt: '-12deg', lift: '10px', delay: '0ms', floatDelay: '0s' },
@@ -10,10 +13,12 @@ const HERO_CARDS = [
 ] as const;
 
 export default function Home() {
+  const [showRules, setShowRules] = useState(false);
+
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center gap-10 overflow-hidden bg-canvas px-4 py-10 text-center">
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute left-1/2 top-16 h-72 w-72 -translate-x-1/2 rounded-full bg-accent-tint opacity-70 blur-3xl" />
+        <div className="absolute left-1/2 top-16 h-72 w-72 -translate-x-1/2 rounded-full bg-accent/10 opacity-70 blur-3xl" />
       </div>
 
       <div className="flex justify-center -space-x-6">
@@ -35,26 +40,45 @@ export default function Home() {
       </div>
 
       <div>
-        <Logo size="lg" className="fade-up" style={{ animationDelay: '260ms' }} />
-        <p className="fade-up mt-3 max-w-xs text-sm text-ink-muted" style={{ animationDelay: '360ms' }}>
-          Lowest hand wins — draw, discard, and call it before anyone else does.
+        <h1
+          className="fade-up font-display text-[42px] font-extrabold leading-none tracking-tight text-ink"
+          style={{ animationDelay: '260ms' }}
+        >
+          LEAST
+          <br />
+          COUNT
+        </h1>
+        <p
+          className="fade-up mx-auto mt-3 max-w-[260px] text-[15px] leading-relaxed text-ink-muted"
+          style={{ animationDelay: '360ms' }}
+        >
+          Keep your hand low, call when you think you&apos;re lowest, and beat the table.
         </p>
       </div>
 
-      <div className="fade-up flex w-full max-w-xs flex-col gap-2" style={{ animationDelay: '460ms' }}>
+      <div className="fade-up flex w-full max-w-xs flex-col gap-3" style={{ animationDelay: '460ms' }}>
         <Link
           href="/play/computer"
-          className="font-display w-full rounded-2xl bg-accent px-4 py-3 font-medium text-white transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 active:scale-95"
+          className="rounded-[18px] bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"
         >
           Play vs Computer
         </Link>
         <Link
           href="/play/friends"
-          className="font-display w-full rounded-2xl border-2 border-hairline px-4 py-2.5 font-medium text-ink transition-all hover:-translate-y-0.5 hover:bg-surface-sunken active:translate-y-0 active:scale-95"
+          className="rounded-[18px] border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
         >
           Play with Friends
         </Link>
+        <button
+          type="button"
+          onClick={() => setShowRules(true)}
+          className="mono-label pt-1.5 text-xs text-ink-muted hover:text-ink"
+        >
+          How to play
+        </button>
       </div>
+
+      {showRules && <RulesModal onClose={() => setShowRules(false)} />}
     </div>
   );
 }

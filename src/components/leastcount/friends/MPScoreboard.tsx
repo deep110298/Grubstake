@@ -1,24 +1,38 @@
 import type { MPGameState } from '@/lib/multiplayer/types';
 
+const AVATAR_COLORS = ['bg-wild text-white', 'bg-hairline text-ink', 'bg-accent text-white'];
+
 export default function MPScoreboard({ state }: { state: MPGameState }) {
   return (
-    <div className="rounded-xl border border-hairline bg-surface px-4 py-3">
-      <div className="mono-label mb-2 text-center text-xs text-ink-faint">
-        Target {state.target} &middot; Round {state.roundNumber}
-      </div>
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
-        {state.seats.map((seat) => {
-          const isOut = state.eliminated.includes(seat);
-          return (
-            <div key={seat} className={`flex items-center gap-1.5 text-sm ${isOut ? 'opacity-50' : ''}`}>
-              {state.turn === seat && <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />}
-              <span className="text-ink-muted">{state.names[seat]}</span>
-              <span className="font-semibold text-ink">{state.scores[seat]}</span>
-              {isOut && <span className="mono-label text-[10px] text-ink-faint">OUT</span>}
+    <div className="grid grid-cols-2 gap-2">
+      {state.seats.map((seat, i) => {
+        const isOut = state.eliminated.includes(seat);
+        const isTurn = state.turn === seat && !isOut;
+        return (
+          <div
+            key={seat}
+            className={`flex items-center justify-between gap-2 rounded-[14px] border px-3 py-2.5 ${
+              isTurn ? 'border-accent bg-surface-sunken shadow-[0_0_0_3px_rgba(10,111,120,0.15)]' : 'border-hairline bg-surface-sunken'
+            } ${isOut ? 'opacity-55' : ''}`}
+          >
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div
+                className={`flex h-6.5 w-6.5 flex-none items-center justify-center rounded-[9px] font-display text-xs font-bold ${AVATAR_COLORS[i % AVATAR_COLORS.length]}`}
+              >
+                {state.names[seat].slice(0, 1).toUpperCase()}
+              </div>
+              <div className="truncate text-sm font-semibold text-ink">{state.names[seat]}</div>
             </div>
-          );
-        })}
-      </div>
+            {isOut ? (
+              <span className="mono-label text-[9px] text-ink-muted">out</span>
+            ) : isTurn ? (
+              <span className="pulse-dot mono-label text-[9px] text-accent">turn</span>
+            ) : (
+              <span className="font-display text-[15px] font-bold text-ink-muted">{state.scores[seat]}</span>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -47,7 +47,7 @@ export default function RulesModal({
       <button
         type="button"
         onClick={onClose}
-        className="mt-3 w-full rounded-lg bg-accent px-4 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+        className="mt-3 w-full rounded-2xl bg-accent px-4 py-3 font-bold text-white shadow-[0_4px_0_var(--accent-shadow)] transition-transform active:translate-y-[2px] active:shadow-[0_2px_0_var(--accent-shadow)]"
       >
         Got it
       </button>

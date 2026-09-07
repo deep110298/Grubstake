@@ -122,7 +122,7 @@ export default function RoomView({ code }: { code: string }) {
         <button
           type="button"
           onClick={() => router.push('/play/friends')}
-          className="rounded-lg border border-hairline px-4 py-2 text-sm font-medium text-ink hover:bg-surface-sunken"
+          className="rounded-2xl border-2 border-hairline-strong px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-surface-sunken"
         >
           Back to Play with Friends
         </button>
@@ -135,7 +135,7 @@ export default function RoomView({ code }: { code: string }) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-canvas px-4 text-center">
         <div>
-          <h1 className="font-display text-xl font-semibold text-ink">Join room {roomCode}</h1>
+          <h1 className="font-display text-2xl font-extrabold tracking-tight text-ink">Join room {roomCode}</h1>
           <p className="mt-1 text-sm text-ink-muted">Enter your name to join.</p>
         </div>
         <input
@@ -143,14 +143,14 @@ export default function RoomView({ code }: { code: string }) {
           onChange={(e) => setJoinName(e.target.value)}
           maxLength={20}
           placeholder="Your name"
-          className="w-full max-w-xs rounded-lg border border-input-border bg-canvas px-3 py-2 text-center text-sm text-ink outline-none focus:border-accent"
+          className="w-full max-w-xs rounded-xl border border-input-border bg-canvas px-3 py-2 text-center text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
         {error && <p className="text-sm text-error">{error}</p>}
         <button
           type="button"
           disabled={joining || !joinName.trim()}
           onClick={handleJoin}
-          className="w-full max-w-xs rounded-lg bg-accent px-4 py-2.5 font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full max-w-xs rounded-2xl bg-accent px-4 py-3 font-bold text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)] disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none disabled:active:translate-y-0"
         >
           {joining ? 'Joining…' : 'Join'}
         </button>
@@ -168,6 +168,7 @@ export default function RoomView({ code }: { code: string }) {
     return (
       <MultiplayerGameBoard
         state={room.game_state}
+        code={roomCode}
         myPlayerId={myPlayerId}
         isHost={isHost}
         onUpdate={handleUpdate}

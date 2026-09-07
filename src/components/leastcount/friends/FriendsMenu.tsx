@@ -4,7 +4,6 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useSyncExternalStore } from 'react';
-import Logo from '@/components/leastcount/Logo';
 import PlayingCard from '@/components/leastcount/PlayingCard';
 import { createRoom, joinRoom, RoomServiceError } from '@/lib/multiplayer/roomService';
 import { getPlayerId } from '@/lib/multiplayer/playerId';
@@ -102,14 +101,12 @@ export default function FriendsMenu() {
 
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center gap-6 bg-canvas px-4 py-10 text-center">
-      <Link href="/" className="mono-label absolute left-4 top-4 text-xs text-ink-faint hover:text-ink">
+      <Link href="/" className="mono-label absolute left-4 top-4 text-xs text-ink-muted hover:text-ink">
         ← Back
       </Link>
 
       {view === 'choice' && (
         <>
-          <Logo size="sm" className="fade-up" />
-
           <div className="flex justify-center -space-x-5">
             <div className="hero-card" style={{ '--card-tilt': '-10deg', '--card-lift': '4px' } as CSSProperties}>
               <div className="hero-card-inner" style={{ '--float-delay': '0s' } as CSSProperties}>
@@ -124,21 +121,24 @@ export default function FriendsMenu() {
           </div>
 
           <div>
-            <h1 className="fade-up font-display text-3xl font-semibold tracking-tight text-ink" style={{ animationDelay: '80ms' }}>
+            <h1
+              className="fade-up font-display text-[32px] font-extrabold leading-tight tracking-tight text-ink"
+              style={{ animationDelay: '80ms' }}
+            >
               Play with Friends
             </h1>
-            <p className="fade-up mt-2 max-w-xs text-sm text-ink-muted" style={{ animationDelay: '160ms' }}>
+            <p className="fade-up mt-2 max-w-xs text-[15px] leading-relaxed text-ink-muted" style={{ animationDelay: '160ms' }}>
               Create a room or join one — lowest hand each round wins.
             </p>
           </div>
-          <div className="fade-up flex w-full max-w-xs flex-col gap-2" style={{ animationDelay: '240ms' }}>
+          <div className="fade-up flex w-full max-w-xs flex-col gap-3" style={{ animationDelay: '240ms' }}>
             <button
               type="button"
               onClick={() => {
                 setError(null);
                 setView('create');
               }}
-              className="font-display w-full rounded-2xl bg-accent px-4 py-3 font-medium text-white transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 active:scale-95"
+              className="rounded-[18px] bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"
             >
               Create a room
             </button>
@@ -148,7 +148,7 @@ export default function FriendsMenu() {
                 setError(null);
                 setView('join');
               }}
-              className="font-display w-full rounded-2xl border-2 border-hairline px-4 py-2.5 font-medium text-ink transition-all hover:-translate-y-0.5 hover:bg-surface-sunken active:translate-y-0 active:scale-95"
+              className="rounded-[18px] border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
             >
               Join a room
             </button>
@@ -159,39 +159,41 @@ export default function FriendsMenu() {
       {view === 'create' && (
         <>
           <div>
-            <h1 className="fade-up font-display text-2xl font-semibold tracking-tight text-ink">Create a room</h1>
-            <p className="fade-up mt-2 max-w-xs text-sm text-ink-muted" style={{ animationDelay: '80ms' }}>
+            <h1 className="fade-up font-display text-[26px] font-extrabold leading-tight tracking-tight text-ink">
+              Create a room
+            </h1>
+            <p className="fade-up mt-2 max-w-xs text-[15px] leading-relaxed text-ink-muted" style={{ animationDelay: '80ms' }}>
               Set it up, then share the code with your friends.
             </p>
           </div>
 
           <div
-            className="fade-up w-full max-w-xs space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-left"
+            className="fade-up w-full max-w-xs space-y-4 rounded-[22px] border border-hairline bg-surface-sunken p-5 text-left"
             style={{ animationDelay: '160ms' }}
           >
             <div>
-              <label className="mono-label text-xs text-ink-faint">Your name</label>
+              <label className="mono-label text-[11px] text-ink-muted">Your name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={20}
                 placeholder="Enter your name"
-                className="mt-1 w-full rounded-xl border border-input-border bg-canvas px-3 py-2 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="mt-1 w-full rounded-xl border border-input-border bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
               />
             </div>
 
             <div>
-              <div className="mono-label text-xs text-ink-faint">Players</div>
-              <div className="mt-1 grid grid-cols-5 gap-2">
+              <div className="mono-label text-[11px] text-ink-muted">Players</div>
+              <div className="mt-1.5 grid grid-cols-5 gap-2">
                 {PLAYER_OPTIONS.map((option) => (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setMaxPlayers(option)}
-                    className={`rounded-xl border-2 px-2 py-2 text-sm font-medium transition-all active:scale-95 ${
+                    className={`rounded-[12px] border-2 py-2.5 text-sm font-display font-semibold transition-all active:scale-95 ${
                       maxPlayers === option
-                        ? 'border-accent bg-accent-tint text-accent'
-                        : 'border-hairline text-ink-muted hover:bg-surface-sunken'
+                        ? 'border-accent bg-accent/10 font-bold text-accent'
+                        : 'border-hairline text-ink-muted hover:bg-surface-sunken-alt'
                     }`}
                   >
                     {option}
@@ -201,17 +203,17 @@ export default function FriendsMenu() {
             </div>
 
             <div>
-              <div className="mono-label text-xs text-ink-faint">Play to</div>
-              <div className="mt-1 flex gap-2">
+              <div className="mono-label text-[11px] text-ink-muted">Play to</div>
+              <div className="mt-1.5 flex gap-2">
                 {TARGET_OPTIONS.map((option) => (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setTargetScore(option)}
-                    className={`flex-1 rounded-xl border-2 px-3 py-2 text-sm font-medium transition-all active:scale-95 ${
+                    className={`flex-1 rounded-[12px] border-2 py-2.5 text-sm font-display font-semibold transition-all active:scale-95 ${
                       targetScore === option
-                        ? 'border-accent bg-accent-tint text-accent'
-                        : 'border-hairline text-ink-muted hover:bg-surface-sunken'
+                        ? 'border-accent bg-accent/10 font-bold text-accent'
+                        : 'border-hairline text-ink-muted hover:bg-surface-sunken-alt'
                     }`}
                   >
                     {option}
@@ -221,23 +223,21 @@ export default function FriendsMenu() {
             </div>
           </div>
 
-          {error && (
-            <p className="rounded-xl bg-error/10 px-3 py-2 text-sm text-error">{error}</p>
-          )}
+          {error && <p className="rounded-xl bg-error/10 px-3 py-2 text-sm text-error">{error}</p>}
 
-          <div className="fade-up flex w-full max-w-xs flex-col gap-2" style={{ animationDelay: '240ms' }}>
+          <div className="fade-up flex w-full max-w-xs flex-col gap-3" style={{ animationDelay: '240ms' }}>
             <button
               type="button"
               disabled={busy}
               onClick={handleCreate}
-              className="font-display w-full rounded-2xl bg-accent px-4 py-3 font-medium text-white transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="rounded-[18px] bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)] disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none disabled:active:translate-y-0"
             >
               {busy ? 'Creating…' : 'Create room'}
             </button>
             <button
               type="button"
               onClick={() => setView('choice')}
-              className="font-display w-full rounded-2xl border-2 border-hairline px-4 py-2.5 font-medium text-ink transition-all hover:-translate-y-0.5 hover:bg-surface-sunken active:translate-y-0 active:scale-95"
+              className="rounded-[18px] border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
             >
               Back
             </button>
@@ -248,55 +248,55 @@ export default function FriendsMenu() {
       {view === 'join' && (
         <>
           <div>
-            <h1 className="fade-up font-display text-2xl font-semibold tracking-tight text-ink">Join a room</h1>
-            <p className="fade-up mt-2 max-w-xs text-sm text-ink-muted" style={{ animationDelay: '80ms' }}>
+            <h1 className="fade-up font-display text-[26px] font-extrabold leading-tight tracking-tight text-ink">
+              Join a room
+            </h1>
+            <p className="fade-up mt-2 max-w-xs text-[15px] leading-relaxed text-ink-muted" style={{ animationDelay: '80ms' }}>
               Enter the code your friend shared with you.
             </p>
           </div>
 
           <div
-            className="fade-up w-full max-w-xs space-y-4 rounded-2xl border border-hairline bg-surface p-4 text-left"
+            className="fade-up w-full max-w-xs space-y-4 rounded-[22px] border border-hairline bg-surface-sunken p-5 text-left"
             style={{ animationDelay: '160ms' }}
           >
             <div>
-              <label className="mono-label text-xs text-ink-faint">Your name</label>
+              <label className="mono-label text-[11px] text-ink-muted">Your name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={20}
                 placeholder="Enter your name"
-                className="mt-1 w-full rounded-xl border border-input-border bg-canvas px-3 py-2 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="mt-1 w-full rounded-xl border border-input-border bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
               />
             </div>
             <div>
-              <label className="mono-label text-xs text-ink-faint">Room code</label>
+              <label className="mono-label text-[11px] text-ink-muted">Room code</label>
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 maxLength={6}
                 placeholder="e.g. K3F9QZ"
-                className="mono-label mt-1 w-full rounded-xl border border-input-border bg-canvas px-3 py-2 text-center text-lg tracking-widest text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+                className="mono-label mt-1 w-full rounded-xl border border-input-border bg-surface px-3 py-2 text-center text-lg tracking-widest text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
               />
             </div>
           </div>
 
-          {error && (
-            <p className="rounded-xl bg-error/10 px-3 py-2 text-sm text-error">{error}</p>
-          )}
+          {error && <p className="rounded-xl bg-error/10 px-3 py-2 text-sm text-error">{error}</p>}
 
-          <div className="fade-up flex w-full max-w-xs flex-col gap-2" style={{ animationDelay: '240ms' }}>
+          <div className="fade-up flex w-full max-w-xs flex-col gap-3" style={{ animationDelay: '240ms' }}>
             <button
               type="button"
               disabled={busy}
               onClick={handleJoin}
-              className="font-display w-full rounded-2xl bg-accent px-4 py-3 font-medium text-white transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-lg active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              className="rounded-[18px] bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)] disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none disabled:active:translate-y-0"
             >
               {busy ? 'Joining…' : 'Join room'}
             </button>
             <button
               type="button"
               onClick={() => setView('choice')}
-              className="font-display w-full rounded-2xl border-2 border-hairline px-4 py-2.5 font-medium text-ink transition-all hover:-translate-y-0.5 hover:bg-surface-sunken active:translate-y-0 active:scale-95"
+              className="rounded-[18px] border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
             >
               Back
             </button>

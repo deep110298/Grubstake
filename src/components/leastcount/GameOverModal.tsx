@@ -14,22 +14,22 @@ export default function GameOverModal({
 
   return (
     <Modal>
-      <h2 className="font-display text-xl font-semibold text-ink">{won ? 'You win!' : 'Computer wins.'}</h2>
+      <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">{won ? 'You win!' : 'Computer wins.'}</h2>
       <p className="mt-1 text-sm text-ink-muted">
         Final score — You: {state.scores.player} &middot; Computer: {state.scores.computer}
       </p>
-      <div className="mt-5 flex flex-col gap-2">
+      <div className="mt-5 flex flex-col gap-3">
         <button
           type="button"
           onClick={onPlayAgain}
-          className="w-full rounded-lg bg-accent px-4 py-2.5 font-medium text-white transition-opacity hover:opacity-90"
+          className="w-full rounded-2xl bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"
         >
           Play again
         </button>
         <button
           type="button"
           onClick={onChangeTarget}
-          className="w-full rounded-lg border border-hairline px-4 py-2.5 font-medium text-ink transition-colors hover:bg-surface-sunken"
+          className="w-full rounded-2xl border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
         >
           Change target score
         </button>
