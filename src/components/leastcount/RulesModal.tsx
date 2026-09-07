@@ -10,15 +10,12 @@ export default function RulesModal({
   variant?: 'computer' | 'friends';
 }) {
   const isComputer = variant === 'computer';
-  const opponent = isComputer ? 'the computer' : 'your friends';
-  const handSize = isComputer ? 5 : 7;
   const declareThreshold = isComputer ? COMPUTER_DECLARE_THRESHOLD : FRIENDS_DECLARE_THRESHOLD;
 
   return (
     <Modal>
       <h2 className="text-lg font-semibold text-ink">How to play</h2>
       <div className="mt-3 space-y-3 text-sm text-ink-muted">
-        <p>Everyone&apos;s dealt {handSize} cards. Lower is better — the goal is to keep your hand&apos;s total value low.</p>
         {isComputer ? (
           <p><strong className="text-ink">Card values:</strong> number cards count as their face value. Aces count as 1. Face cards (J, Q, K) count as 10.</p>
         ) : (
@@ -47,7 +44,6 @@ export default function RulesModal({
           <p><strong className="text-ink">Winning:</strong> the first player to reach the target score loses — the other player wins.</p>
         )}
       </div>
-      <p className="mt-1 text-xs text-ink-faint">Playing against {opponent}.</p>
       <button
         type="button"
         onClick={onClose}
