@@ -7,11 +7,13 @@ import type { MPGameState } from '@/lib/multiplayer/types';
 
 export default function MPGameOverModal({
   state,
+  myPlayerId,
   isHost,
   onPlayAgain,
   onLeave,
 }: {
   state: MPGameState;
+  myPlayerId: string;
   isHost: boolean;
   onPlayAgain: () => void;
   onLeave: () => void;
@@ -19,22 +21,34 @@ export default function MPGameOverModal({
   const [showStandings, setShowStandings] = useState(false);
   const [readyForNext, setReadyForNext] = useState(false);
   const winnerName = state.winner ? state.names[state.winner] : null;
+  const iWon = state.winner === myPlayerId;
   const ranked = [...state.seats].sort((a, b) => state.scores[a] - state.scores[b]);
 
   if (!showStandings) {
     return (
       <>
-        <Confetti />
+        {iWon && <Confetti />}
         <Modal>
-          <div className="flex flex-col items-center gap-2 text-center">
-            <span className="call-pop text-6xl" aria-hidden>
-              🏆
-            </span>
-            <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">Congratulations, Winner!</h2>
-            {winnerName && (
-              <p className="text-sm text-ink-muted">{winnerName} had the lowest score and takes the game.</p>
-            )}
-          </div>
+          {iWon ? (
+            <div className="flex flex-col items-center gap-2 text-center">
+              <span className="call-pop text-6xl" aria-hidden>
+                🏆
+              </span>
+              <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">Congratulations, Winner!</h2>
+              <p className="text-sm text-ink-muted">You had the lowest score and take the game.</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-center">
+              <span className="call-pop text-6xl" aria-hidden>
+                🥲
+              </span>
+              <span className="mono-label rounded-full bg-hairline px-4 py-1.5 text-[11px] font-bold text-ink-muted">
+                NOT THIS TIME
+              </span>
+              <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">So close!</h2>
+              {winnerName && <p className="text-sm text-ink-muted">{winnerName} takes the win — good game.</p>}
+            </div>
+          )}
           <button
             type="button"
             onClick={() => setShowStandings(true)}

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { MPGameState } from '@/lib/multiplayer/types';
+import ThinkingDots from '@/components/leastcount/ThinkingDots';
 
 const AVATAR_COLORS = ['bg-wild text-white', 'bg-hairline text-ink', 'bg-accent text-white'];
 
@@ -9,6 +10,7 @@ export default function MPScoreboard({ state }: { state: MPGameState }) {
       {state.seats.map((seat, i) => {
         const isOut = state.eliminated.includes(seat);
         const isTurn = state.turn === seat && !isOut;
+        const cardCount = state.hands[seat]?.length ?? 0;
         return (
           <div
             key={seat}
@@ -22,18 +24,28 @@ export default function MPScoreboard({ state }: { state: MPGameState }) {
               >
                 {state.names[seat].slice(0, 1).toUpperCase()}
               </div>
-              <div className="truncate text-sm font-semibold text-ink">{state.names[seat]}</div>
+              <div className="flex flex-col overflow-hidden">
+                <div className="truncate text-sm font-semibold text-ink">{state.names[seat]}</div>
+                {!isOut && (
+                  <span className="mono-label text-[9px] text-ink-faint">
+                    {cardCount} card{cardCount === 1 ? '' : 's'}
+                  </span>
+                )}
+              </div>
             </div>
             {isOut ? (
               <span className="mono-label text-[9px] text-ink-muted">out</span>
             ) : isTurn ? (
-              <motion.span
-                layoutId="mp-turn-badge"
-                transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-                className="pulse-dot mono-label text-[9px] text-accent"
-              >
-                turn
-              </motion.span>
+              <span className="flex items-center gap-1.5">
+                <ThinkingDots label={`${state.names[seat]} is thinking`} />
+                <motion.span
+                  layoutId="mp-turn-badge"
+                  transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+                  className="pulse-dot mono-label text-[9px] text-accent"
+                >
+                  turn
+                </motion.span>
+              </span>
             ) : (
               <span className="font-display text-[15px] font-bold text-ink-muted">{state.scores[seat]}</span>
             )}

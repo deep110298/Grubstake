@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { backgroundCss } from '@/lib/multiplayer/backgrounds';
 import { handValue, sortHand } from '@/lib/multiplayer/deck';
 import {
   call,
@@ -28,6 +29,7 @@ const CALL_REVEAL_DELAY = 2200;
 export default function MultiplayerGameBoard({
   state,
   code,
+  background,
   myPlayerId,
   isHost,
   onUpdate,
@@ -37,9 +39,10 @@ export default function MultiplayerGameBoard({
 }: {
   state: MPGameState;
   code?: string;
+  background?: string;
   myPlayerId: string;
   isHost: boolean;
-  onUpdate: (next: MPGameState) => void;
+  onUpdate: (next: MPGameState) => Promise<void> | void;
   onNextRound: () => void;
   onPlayAgain: () => void;
   onLeave: () => void;
@@ -82,7 +85,11 @@ export default function MultiplayerGameBoard({
 
   function commit(next: MPGameState) {
     setLocalOverride(next);
-    onUpdate(next);
+    // If the write to Supabase fails (network blip, dropped connection),
+    // roll the optimistic update back rather than leaving this client
+    // stuck showing a move that never actually landed — the exact
+    // symptom that used to freeze a room until someone rejoined.
+    Promise.resolve(onUpdate(next)).catch(() => setLocalOverride(null));
   }
 
   const iAmEliminated = display.eliminated.includes(myPlayerId);
@@ -106,7 +113,7 @@ export default function MultiplayerGameBoard({
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-canvas">
+    <div className="flex min-h-dvh flex-col" style={{ background: backgroundCss(background) }}>
       <WildCardRevealModal jokerRank={state.jokerRank} />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center">
@@ -263,7 +270,13 @@ export default function MultiplayerGameBoard({
       )}
 
       {display.phase === 'game-over' && (
-        <MPGameOverModal state={display} isHost={isHost} onPlayAgain={onPlayAgain} onLeave={onLeave} />
+        <MPGameOverModal
+          state={display}
+          myPlayerId={myPlayerId}
+          isHost={isHost}
+          onPlayAgain={onPlayAgain}
+          onLeave={onLeave}
+        />
       )}
     </div>
   );

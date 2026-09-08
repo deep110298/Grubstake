@@ -45,6 +45,7 @@ export interface Room {
   max_players: number;
   target_score: number;
   status: RoomStatus;
+  background: string;
   game_state: MPGameState | null;
   created_at: string;
   updated_at: string;

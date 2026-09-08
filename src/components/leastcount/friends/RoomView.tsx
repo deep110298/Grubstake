@@ -57,9 +57,25 @@ export default function RoomView({ code }: { code: string }) {
     refreshRef.current = load;
     load();
     const unsubscribe = subscribeToRoom(roomCode, load);
+
+    // Realtime can silently drop a connection (backgrounded tab, flaky
+    // network) with no reconnect signal, leaving clients stuck on stale
+    // state indefinitely. A periodic poll plus a refresh on regaining
+    // visibility/connectivity makes the room self-heal within seconds
+    // instead of requiring a manual reload.
+    const pollInterval = setInterval(load, 4000);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') load();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('online', load);
+
     return () => {
       ignore = true;
       unsubscribe();
+      clearInterval(pollInterval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('online', load);
     };
   }, [roomCode]);
 
@@ -88,15 +104,16 @@ export default function RoomView({ code }: { code: string }) {
     }
   }
 
-  function handleUpdate(next: MPGameState) {
-    updateGameState(roomCode, next).catch((err) => {
+  function handleUpdate(next: MPGameState): Promise<void> {
+    return updateGameState(roomCode, next).catch((err) => {
       setError(err instanceof RoomServiceError ? err.message : 'Could not sync your move.');
+      throw err;
     });
   }
 
   function handleNextRound() {
     if (!room?.game_state) return;
-    handleUpdate(startNextRound(room.game_state));
+    handleUpdate(startNextRound(room.game_state)).catch(() => {});
   }
 
   function handlePlayAgain() {
@@ -169,6 +186,7 @@ export default function RoomView({ code }: { code: string }) {
       <MultiplayerGameBoard
         state={room.game_state}
         code={roomCode}
+        background={room.background}
         myPlayerId={myPlayerId}
         isHost={isHost}
         onUpdate={handleUpdate}

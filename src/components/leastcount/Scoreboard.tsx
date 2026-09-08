@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type { GameState } from '@/lib/leastCount/types';
+import ThinkingDots from './ThinkingDots';
 
 export default function Scoreboard({ state, playerName }: { state: GameState; playerName: string }) {
   const computerThinking = state.turn === 'computer' && state.phase === 'awaiting-action';
@@ -50,7 +51,7 @@ function ScoreBlock({
       </div>
       <div className="flex items-center gap-1.5" style={{ justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}>
         <div className="font-display text-[30px] font-bold leading-none text-ink">{score}</div>
-        <AnimatePresence>{thinking && <ThinkingDots />}</AnimatePresence>
+        <AnimatePresence>{thinking && <ThinkingDots label="Computer is thinking" className="mb-1" />}</AnimatePresence>
       </div>
     </div>
   );
@@ -67,23 +68,3 @@ function ActiveDot() {
   );
 }
 
-function ThinkingDots() {
-  return (
-    <motion.span
-      initial={{ opacity: 0, scale: 0.6 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.6 }}
-      className="mb-1 flex items-end gap-0.5"
-      aria-label="Computer is thinking"
-    >
-      {[0, 1, 2].map((i) => (
-        <motion.span
-          key={i}
-          className="h-1.5 w-1.5 rounded-full bg-accent"
-          animate={{ y: [0, -4, 0] }}
-          transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15, ease: 'easeInOut' }}
-        />
-      ))}
-    </motion.span>
-  );
-}

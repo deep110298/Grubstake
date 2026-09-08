@@ -9,8 +9,9 @@ export async function createRoom(options: {
   hostName: string;
   maxPlayers: number;
   targetScore: number;
+  background: string;
 }): Promise<string> {
-  const { hostPlayerId, hostName, maxPlayers, targetScore } = options;
+  const { hostPlayerId, hostName, maxPlayers, targetScore, background } = options;
   const supabase = getSupabase();
 
   for (let attempt = 0; attempt < 5; attempt++) {
@@ -20,6 +21,7 @@ export async function createRoom(options: {
       host_player_id: hostPlayerId,
       max_players: maxPlayers,
       target_score: targetScore,
+      background,
       status: 'lobby',
     });
 
