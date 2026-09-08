@@ -82,21 +82,31 @@ export default function PlayingCard({
   );
 }
 
+const BACK_BADGE_SIZE: Record<NonNullable<PlayingCardProps['size']>, string> = {
+  sm: 'h-4 w-4 rounded-[5px]',
+  md: 'h-5.5 w-5.5 rounded-[7px]',
+  lg: 'h-6.5 w-6.5 rounded-[8px]',
+};
+
 const BACK_SPADE_SIZE: Record<NonNullable<PlayingCardProps['size']>, string> = {
-  sm: 'text-lg',
-  md: 'text-2xl',
-  lg: 'text-3xl',
+  sm: 'text-[9px]',
+  md: 'text-xs',
+  lg: 'text-sm',
 };
 
 export function CardBack({ size = 'md' }: { size?: PlayingCardProps['size'] }) {
   return (
     <div
-      className={`flex flex-shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg border border-card-back-border ${CARD_SHADOW[size ?? 'md']} ${SIZE_CLASSES[size ?? 'md']}`}
+      className={`flex flex-shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-card-back-border ${CARD_SHADOW[size ?? 'md']} ${SIZE_CLASSES[size ?? 'md']}`}
       style={{ background: 'repeating-linear-gradient(135deg, var(--card-back-a) 0 7px, var(--card-back-b) 7px 14px)' }}
     >
-      <span className={`font-mono leading-none text-ink/20 ${BACK_SPADE_SIZE[size ?? 'md']}`}>♠</span>
+      <div
+        className={`flex items-center justify-center bg-accent shadow-[0_1.5px_0_var(--accent-shadow)] ${BACK_BADGE_SIZE[size ?? 'md']}`}
+      >
+        <span className={`font-mono leading-none text-white ${BACK_SPADE_SIZE[size ?? 'md']}`}>♠</span>
+      </div>
       {size !== 'sm' && (
-        <span className="mono-label text-[6px] leading-none text-ink/15">Least Count</span>
+        <span className="mono-label text-[6.5px] leading-none text-ink-soft">Least Count</span>
       )}
     </div>
   );
