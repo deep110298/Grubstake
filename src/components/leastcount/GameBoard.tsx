@@ -230,7 +230,7 @@ export default function GameBoard() {
             onClick={() => setState((current) => (current ? call(current, 'player') : current))}
             className="flex-1 rounded-2xl bg-accent py-[15px] text-center font-bold text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:active:translate-y-0"
           >
-            Call!
+            Least Count
           </button>
         </div>
       </div>

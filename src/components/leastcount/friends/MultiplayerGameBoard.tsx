@@ -245,7 +245,7 @@ export default function MultiplayerGameBoard({
                 onClick={() => commit(call(display, myPlayerId))}
                 className="flex-1 rounded-2xl bg-accent py-[15px] text-center font-bold text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)] disabled:cursor-not-allowed disabled:bg-hairline disabled:text-ink-faint disabled:shadow-none disabled:active:translate-y-0"
               >
-                Call at {DECLARE_THRESHOLD}
+                Least Count
               </button>
             </div>
           </>
