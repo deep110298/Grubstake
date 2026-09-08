@@ -97,8 +97,7 @@ const BACK_SPADE_SIZE: Record<NonNullable<PlayingCardProps['size']>, string> = {
 export function CardBack({ size = 'md' }: { size?: PlayingCardProps['size'] }) {
   return (
     <div
-      className={`flex flex-shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-card-back-border ${CARD_SHADOW[size ?? 'md']} ${SIZE_CLASSES[size ?? 'md']}`}
-      style={{ background: 'repeating-linear-gradient(135deg, var(--card-back-a) 0 7px, var(--card-back-b) 7px 14px)' }}
+      className={`flex flex-shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-card-back-border bg-card-back-a ${CARD_SHADOW[size ?? 'md']} ${SIZE_CLASSES[size ?? 'md']}`}
     >
       <div
         className={`flex items-center justify-center bg-accent shadow-[0_1.5px_0_var(--accent-shadow)] ${BACK_BADGE_SIZE[size ?? 'md']}`}
