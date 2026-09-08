@@ -14,10 +14,25 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
 });
 
+const DESCRIPTION =
+  "Play Least Count against the computer: keep your hand low, call it, and win.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://leastcountapp.com"),
   title: "Least Count App",
-  description:
-    "Play Least Count against the computer: keep your hand low, call it, and win.",
+  description: DESCRIPTION,
+  openGraph: {
+    title: "Least Count App",
+    description: DESCRIPTION,
+    url: "https://leastcountapp.com",
+    siteName: "Least Count App",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Least Count App",
+    description: DESCRIPTION,
+  },
 };
 
 export const viewport = {
