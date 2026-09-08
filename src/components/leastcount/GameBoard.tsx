@@ -277,12 +277,7 @@ export default function GameBoard() {
       )}
 
       {state.phase === 'game-over' && (
-        <GameOverModal
-          state={state}
-          playerName={playerName}
-          onPlayAgain={() => setState(newGame(state.target))}
-          onChangeTarget={() => setState(null)}
-        />
+        <GameOverModal state={state} playerName={playerName} onPlayAgain={() => setState(newGame(state.target))} />
       )}
     </div>
   );
