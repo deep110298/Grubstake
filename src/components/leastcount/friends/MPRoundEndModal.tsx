@@ -14,6 +14,7 @@ export default function MPRoundEndModal({
   isHost: boolean;
 }) {
   const callerName = state.names[result.caller];
+  const ranked = [...state.seats].sort((a, b) => state.scores[a] - state.scores[b]);
 
   return (
     <Modal>
@@ -56,6 +57,22 @@ export default function MPRoundEndModal({
                   <PlayingCard key={card.id} card={card} jokerRank={result.jokerRank} size="sm" />
                 ))}
               </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-3 flex flex-col gap-1 rounded-2xl border border-hairline bg-surface-sunken p-3.5">
+        <span className="mono-label px-1 pb-0.5 text-[11px] text-ink-muted">Running total</span>
+        {ranked.map((seat) => {
+          const isOut = state.eliminated.includes(seat);
+          return (
+            <div key={seat} className={`flex items-center justify-between rounded-xl px-1.5 py-1 ${isOut ? 'opacity-55' : ''}`}>
+              <span className="flex items-center gap-1.5 truncate text-sm font-semibold text-ink">
+                {state.names[seat]}
+                {isOut && <span className="mono-label text-[9px] text-wild">OUT</span>}
+              </span>
+              <span className="font-display text-base font-bold text-ink">{state.scores[seat]}</span>
             </div>
           );
         })}
