@@ -10,7 +10,6 @@ import {
   canCall,
   canDrawReplacement,
   canPlayCards,
-  DECLARE_THRESHOLD,
   drawReplacement,
   newGame,
   playCards,
@@ -86,16 +85,6 @@ export default function GameBoard() {
       if (first && card && first.rank !== card.rank) return [cardId];
       return [...current, cardId];
     });
-  }
-
-  function statusText(): string {
-    if (state!.turn === 'computer') return 'Computer is playing…';
-    if (yourTurnToDraw) return 'Doesn’t match — draw a replacement card.';
-    if (selected.length > 0) return 'Tap "Play" to discard the selected card(s).';
-    if (yourTurnToAct && !canCallNow) {
-      return `Choose a card from your hand to play. (You need ${DECLARE_THRESHOLD} or less to call — you have ${yourHandValue}.)`;
-    }
-    return 'Choose a card from your hand to play, or call Least Count.';
   }
 
   return (
@@ -193,8 +182,6 @@ export default function GameBoard() {
             </>
           )}
         </section>
-
-        <p className="text-center text-sm text-ink-soft">{statusText()}</p>
 
         <section className="flex flex-col items-center gap-2.5">
           <span className="mono-label flex items-center gap-2 text-[11px] text-ink-muted">
