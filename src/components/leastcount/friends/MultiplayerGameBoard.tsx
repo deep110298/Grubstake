@@ -113,25 +113,26 @@ export default function MultiplayerGameBoard({
           <span className="mono-label text-[11px] text-ink-muted">
             {code ? `Room ${code} · ` : ''}Round {display.roundNumber}
           </span>
-          <div className="flex items-center gap-2.5">
-            <span className="mono-label inline-flex items-center gap-2 rounded-full bg-wild px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
-              WILD · {display.jokerRank}
-            </span>
-            <button
-              type="button"
-              onClick={() => setPaused(true)}
-              className="mono-label text-[11px] text-ink-muted hover:text-ink"
-            >
-              Pause
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowRules(true)}
-              className="mono-label text-[11px] text-ink-muted hover:text-ink"
-            >
-              Rules
-            </button>
-          </div>
+          <span className="mono-label inline-flex items-center gap-2 rounded-full bg-wild px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
+            WILD · {display.jokerRank}
+          </span>
+        </div>
+
+        <div className="-mt-2 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setPaused(true)}
+            className="mono-label text-[11px] text-ink-muted hover:text-ink"
+          >
+            Pause
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowRules(true)}
+            className="mono-label text-[11px] text-ink-muted hover:text-ink"
+          >
+            Rules
+          </button>
         </div>
 
         <MPScoreboard state={display} />

@@ -26,8 +26,8 @@ export default function RoundEndModal({
         </h2>
         <p className="max-w-[270px] text-sm leading-relaxed text-ink-muted">
           {result.correct
-            ? `${callerLabel} had the lowest hand, so ${result.caller === 'player' ? 'you score' : 'they score'} nothing this round.`
-            : `${callerLabel} didn't have the lowest hand, so ${result.caller === 'player' ? 'you take' : 'they take'} the penalty.`}
+            ? `${callerLabel} had the lowest hand and scores nothing this round.`
+            : `${callerLabel} didn't have the lowest hand and takes the penalty.`}
         </p>
       </div>
 
