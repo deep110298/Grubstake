@@ -1,12 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type { GameState } from '@/lib/leastCount/types';
 
-export default function Scoreboard({ state }: { state: GameState }) {
+export default function Scoreboard({ state, playerName }: { state: GameState; playerName: string }) {
   const computerThinking = state.turn === 'computer' && state.phase === 'awaiting-action';
 
   return (
     <div className="flex items-center justify-between gap-3 rounded-[20px] border border-hairline bg-surface-sunken px-[18px] py-3.5">
-      <ScoreBlock label="You" score={state.scores.player} active={state.turn === 'player'} />
+      <ScoreBlock label={playerName} score={state.scores.player} active={state.turn === 'player'} />
       <div className="mono-label flex flex-col items-center gap-1 text-center text-[11px] leading-tight text-ink-muted">
         <div>Round {state.roundNumber}</div>
         <div className="text-ink-soft">Limit {state.target}</div>
@@ -45,7 +45,7 @@ function ScoreBlock({
         style={{ justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}
       >
         {align === 'right' && active && <ActiveDot />}
-        {label}
+        <span className="max-w-[90px] truncate">{label}</span>
         {align === 'left' && active && <ActiveDot />}
       </div>
       <div className="flex items-center gap-1.5" style={{ justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}>

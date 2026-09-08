@@ -5,13 +5,15 @@ import PlayingCard from './PlayingCard';
 export default function RoundEndModal({
   state,
   result,
+  playerName,
   onContinue,
 }: {
   state: GameState;
   result: RoundResult;
+  playerName: string;
   onContinue: () => void;
 }) {
-  const callerLabel = result.caller === 'player' ? 'you' : 'Computer';
+  const callerLabel = result.caller === 'player' ? playerName : 'Computer';
 
   return (
     <Modal>
@@ -24,14 +26,14 @@ export default function RoundEndModal({
         </h2>
         <p className="max-w-[270px] text-sm leading-relaxed text-ink-muted">
           {result.correct
-            ? `${result.caller === 'player' ? 'You' : callerLabel} had the lowest hand, so ${result.caller === 'player' ? 'you score' : 'they score'} nothing this round.`
-            : `${result.caller === 'player' ? 'You' : callerLabel} didn't have the lowest hand, so ${result.caller === 'player' ? 'you take' : 'they take'} the penalty.`}
+            ? `${callerLabel} had the lowest hand, so ${result.caller === 'player' ? 'you score' : 'they score'} nothing this round.`
+            : `${callerLabel} didn't have the lowest hand, so ${result.caller === 'player' ? 'you take' : 'they take'} the penalty.`}
         </p>
       </div>
 
       <div className="mt-5 flex flex-col gap-3">
         <HandSummary
-          label="You"
+          label={playerName}
           cards={result.hands.player}
           jokerRank={result.jokerRank}
           value={result.values.player}

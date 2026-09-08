@@ -3,10 +3,12 @@ import Modal from './Modal';
 
 export default function GameOverModal({
   state,
+  playerName,
   onPlayAgain,
   onChangeTarget,
 }: {
   state: GameState;
+  playerName: string;
   onPlayAgain: () => void;
   onChangeTarget: () => void;
 }) {
@@ -14,9 +16,11 @@ export default function GameOverModal({
 
   return (
     <Modal>
-      <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">{won ? 'You win!' : 'Computer wins.'}</h2>
+      <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">
+        {won ? 'You win!' : 'Computer wins.'}
+      </h2>
       <p className="mt-1 text-sm text-ink-muted">
-        Final score — You: {state.scores.player} &middot; Computer: {state.scores.computer}
+        Final score — {playerName}: {state.scores.player} &middot; Computer: {state.scores.computer}
       </p>
       <div className="mt-5 flex flex-col gap-3">
         <button

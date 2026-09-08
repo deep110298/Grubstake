@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { computerTakeTurn } from '@/lib/leastCount/ai';
+import { computerTakeTurn, type Difficulty } from '@/lib/leastCount/ai';
 import { handValue, sortHand } from '@/lib/leastCount/deck';
 import {
   call,
@@ -28,9 +28,12 @@ import WildCardRevealModal from './WildCardRevealModal';
 
 const DEAL_SPRING = { type: 'spring' as const, stiffness: 320, damping: 26 };
 const CALL_REVEAL_DELAY = 2200;
+const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
 
 export default function GameBoard() {
   const [state, setState] = useState<GameState | null>(null);
+  const [playerName, setPlayerName] = useState('You');
+  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [selected, setSelected] = useState<string[]>([]);
   const [showRules, setShowRules] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -41,12 +44,12 @@ export default function GameBoard() {
   useEffect(() => {
     if (!state || paused || state.turn !== 'computer' || state.phase !== 'awaiting-action') return;
     computerTimer.current = setTimeout(() => {
-      setState((current) => (current ? computerTakeTurn(current) : current));
+      setState((current) => (current ? computerTakeTurn(current, difficulty) : current));
     }, 800);
     return () => {
       if (computerTimer.current) clearTimeout(computerTimer.current);
     };
-  }, [state, paused]);
+  }, [state, paused, difficulty]);
 
   // Reset whether the round breakdown has been revealed yet whenever we
   // enter (or leave) the round-end phase — adjusting state during render
@@ -66,7 +69,17 @@ export default function GameBoard() {
   }, [roundEndKey]);
 
   if (!state) {
-    return <SetupScreen onStart={(target) => setState(newGame(target))} />;
+    return (
+      <SetupScreen
+        initialName={playerName === 'You' ? '' : playerName}
+        initialDifficulty={difficulty}
+        onStart={({ name, target, difficulty: chosenDifficulty }) => {
+          setPlayerName(name);
+          setDifficulty(chosenDifficulty);
+          setState(newGame(target));
+        }}
+      />
+    );
   }
 
   const yourTurnToAct = canAct(state, 'player');
@@ -91,7 +104,7 @@ export default function GameBoard() {
     <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
-        <Scoreboard state={state} />
+        <Scoreboard state={state} playerName={playerName} />
 
         <div className="-mt-2 flex items-center justify-between">
           <button
@@ -111,7 +124,9 @@ export default function GameBoard() {
         </div>
 
         <section className="flex flex-col items-center gap-2 pt-1">
-          <span className="mono-label text-[11px] text-ink-muted">Computer · {state.hands.computer.length} cards</span>
+          <span className="mono-label text-[11px] text-ink-muted">
+            Computer · {DIFFICULTY_LABEL[difficulty]} · {state.hands.computer.length} cards
+          </span>
           <div className="flex gap-1.5" key={state.roundNumber}>
             <AnimatePresence mode="popLayout">
               {state.hands.computer.map((card, i) => (
@@ -249,13 +264,14 @@ export default function GameBoard() {
       )}
 
       {state.phase === 'round-end' && state.lastRoundResult && !revealRoundEnd && (
-        <CallAnnouncement callerLabel={state.lastRoundResult.caller === 'player' ? 'You' : 'Computer'} />
+        <CallAnnouncement callerLabel={state.lastRoundResult.caller === 'player' ? playerName : 'Computer'} />
       )}
 
       {state.phase === 'round-end' && state.lastRoundResult && revealRoundEnd && (
         <RoundEndModal
           state={state}
           result={state.lastRoundResult}
+          playerName={playerName}
           onContinue={() => setState((current) => (current ? startNextRound(current) : current))}
         />
       )}
@@ -263,6 +279,7 @@ export default function GameBoard() {
       {state.phase === 'game-over' && (
         <GameOverModal
           state={state}
+          playerName={playerName}
           onPlayAgain={() => setState(newGame(state.target))}
           onChangeTarget={() => setState(null)}
         />

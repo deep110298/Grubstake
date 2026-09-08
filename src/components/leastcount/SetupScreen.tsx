@@ -3,9 +3,16 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { HAND_SIZE, INCORRECT_CALL_PENALTY, DECLARE_THRESHOLD } from '@/lib/leastCount/engine';
+import type { Difficulty } from '@/lib/leastCount/ai';
 import RulesModal from './RulesModal';
 
 const TARGET_OPTIONS = [50, 100, 150];
+
+const DIFFICULTY_OPTIONS: { value: Difficulty; label: string }[] = [
+  { value: 'easy', label: 'Easy' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'hard', label: 'Hard' },
+];
 
 const RULES = [
   'Discard one card, or several of the same rank.',
@@ -13,8 +20,20 @@ const RULES = [
   `Call at ${DECLARE_THRESHOLD} or less. Lowest hand wins the round.`,
 ];
 
-export default function SetupScreen({ onStart }: { onStart: (target: number) => void }) {
-  const [target, setTarget] = useState(100);
+export default function SetupScreen({
+  initialName = '',
+  initialTarget = 100,
+  initialDifficulty = 'medium',
+  onStart,
+}: {
+  initialName?: string;
+  initialTarget?: number;
+  initialDifficulty?: Difficulty;
+  onStart: (opts: { name: string; target: number; difficulty: Difficulty }) => void;
+}) {
+  const [name, setName] = useState(initialName);
+  const [target, setTarget] = useState(initialTarget);
+  const [difficulty, setDifficulty] = useState<Difficulty>(initialDifficulty);
   const [showRules, setShowRules] = useState(false);
 
   return (
@@ -40,6 +59,20 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
           </p>
         </div>
 
+        <div className="flex flex-col gap-2 rounded-[22px] border border-hairline bg-surface-sunken p-5">
+          <label htmlFor="player-name" className="mono-label text-[11px] text-ink-muted">
+            Your name
+          </label>
+          <input
+            id="player-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={20}
+            placeholder="You"
+            className="rounded-xl border border-input-border bg-canvas px-3.5 py-2.5 text-[15px] text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+          />
+        </div>
+
         <div className="flex flex-col gap-3.5 rounded-[22px] border border-hairline bg-surface-sunken p-5">
           <div className="mono-label text-[11px] text-ink-muted">Play to</div>
           <div className="flex gap-2.5">
@@ -61,6 +94,24 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
           <p className="text-[13px] leading-relaxed text-ink-muted">
             First to {target} points loses. A wrong call costs you {INCORRECT_CALL_PENALTY}.
           </p>
+
+          <div className="mt-1 mono-label text-[11px] text-ink-muted">Difficulty</div>
+          <div className="flex gap-2.5">
+            {DIFFICULTY_OPTIONS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setDifficulty(option.value)}
+                className={`flex-1 rounded-[14px] border-2 py-3 text-center font-display text-[15px] font-semibold transition-colors ${
+                  difficulty === option.value
+                    ? 'border-accent bg-accent/10 font-bold text-accent'
+                    : 'border-hairline text-ink-muted hover:bg-surface-sunken-alt'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col gap-3.5 rounded-[22px] border border-hairline bg-surface-sunken p-5">
@@ -80,7 +131,7 @@ export default function SetupScreen({ onStart }: { onStart: (target: number) => 
         <div className="flex flex-col gap-3">
           <button
             type="button"
-            onClick={() => onStart(target)}
+            onClick={() => onStart({ name: name.trim() || 'You', target, difficulty })}
             className="rounded-[18px] bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"
           >
             Start game
