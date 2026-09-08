@@ -37,11 +37,11 @@ export default function RulesModal({
         ) : (
           <>
             <p>To be right, your hand has to be strictly the lowest — an exact tie with anyone else counts as a wrong call. If you&apos;re right, everyone else scores their hand&apos;s value and you score nothing. If you&apos;re wrong, only you are penalized {INCORRECT_CALL_PENALTY} points — nobody else&apos;s score changes that round.</p>
-            <p><strong className="text-ink">Winning:</strong> once a player&apos;s total reaches the target score, they&apos;re eliminated and the rest keep playing. The last player left standing wins.</p>
+            <p><strong className="text-ink">Winning:</strong> once a player&apos;s total reaches the limit, they&apos;re eliminated and the rest keep playing. The last player left standing wins.</p>
           </>
         )}
         {isComputer && (
-          <p><strong className="text-ink">Winning:</strong> the first player to reach the target score loses — the other player wins.</p>
+          <p><strong className="text-ink">Winning:</strong> the first player to reach the limit loses — the other player wins.</p>
         )}
       </div>
       <button

@@ -31,7 +31,7 @@ export default function GameOverModal({
           onClick={onChangeTarget}
           className="w-full rounded-2xl border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
         >
-          Change target score
+          Change limit
         </button>
       </div>
     </Modal>
