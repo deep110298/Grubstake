@@ -109,33 +109,33 @@ export default function MultiplayerGameBoard({
     <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
-        <div className="flex items-center justify-between">
-          <span className="mono-label text-[11px] text-ink-muted">
-            {code ? `Room ${code} · ` : ''}Round {display.roundNumber}
-          </span>
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+          <span className="mono-label text-[11px] text-ink-muted">{code ? `Room ${code}` : ''}</span>
           <span className="mono-label inline-flex items-center gap-2 rounded-full bg-wild px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
             WILD · {display.jokerRank}
           </span>
+          <span />
         </div>
 
-        <div className="-mt-2 flex items-center justify-between">
+        <MPScoreboard state={display} />
+
+        <div className="-mt-1 grid grid-cols-[1fr_auto_1fr] items-center">
           <button
             type="button"
             onClick={() => setPaused(true)}
-            className="mono-label text-[11px] text-ink-muted hover:text-ink"
+            className="mono-label justify-self-start text-[11px] text-ink-muted hover:text-ink"
           >
             Pause
           </button>
+          <span className="mono-label text-[11px] text-ink-muted">Round {display.roundNumber}</span>
           <button
             type="button"
             onClick={() => setShowRules(true)}
-            className="mono-label text-[11px] text-ink-muted hover:text-ink"
+            className="mono-label justify-self-end text-[11px] text-ink-muted hover:text-ink"
           >
             Rules
           </button>
         </div>
-
-        <MPScoreboard state={display} />
 
         <section
           className="flex flex-1 items-center justify-center gap-6 rounded-[24px]"
