@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import type { MPGameState } from '@/lib/multiplayer/types';
 
 const AVATAR_COLORS = ['bg-wild text-white', 'bg-hairline text-ink', 'bg-accent text-white'];
@@ -11,7 +12,7 @@ export default function MPScoreboard({ state }: { state: MPGameState }) {
         return (
           <div
             key={seat}
-            className={`flex items-center justify-between gap-2 rounded-[14px] border px-3 py-2.5 ${
+            className={`flex items-center justify-between gap-2 rounded-[14px] border px-3 py-2.5 transition-[border-color,box-shadow] duration-300 ${
               isTurn ? 'border-accent bg-surface-sunken shadow-[0_0_0_3px_rgba(10,111,120,0.15)]' : 'border-hairline bg-surface-sunken'
             } ${isOut ? 'opacity-55' : ''}`}
           >
@@ -26,7 +27,13 @@ export default function MPScoreboard({ state }: { state: MPGameState }) {
             {isOut ? (
               <span className="mono-label text-[9px] text-ink-muted">out</span>
             ) : isTurn ? (
-              <span className="pulse-dot mono-label text-[9px] text-accent">turn</span>
+              <motion.span
+                layoutId="mp-turn-badge"
+                transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+                className="pulse-dot mono-label text-[9px] text-accent"
+              >
+                turn
+              </motion.span>
             ) : (
               <span className="font-display text-[15px] font-bold text-ink-muted">{state.scores[seat]}</span>
             )}

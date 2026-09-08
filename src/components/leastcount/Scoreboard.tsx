@@ -1,6 +1,9 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import type { GameState } from '@/lib/leastCount/types';
 
 export default function Scoreboard({ state }: { state: GameState }) {
+  const computerThinking = state.turn === 'computer' && state.phase === 'awaiting-action';
+
   return (
     <div className="flex items-center justify-between gap-3 rounded-[20px] border border-hairline bg-surface-sunken px-[18px] py-3.5">
       <ScoreBlock label="You" score={state.scores.player} active={state.turn === 'player'} />
@@ -11,7 +14,13 @@ export default function Scoreboard({ state }: { state: GameState }) {
           WILD · {state.jokerRank}
         </div>
       </div>
-      <ScoreBlock label="Computer" score={state.scores.computer} active={state.turn === 'computer'} align="right" />
+      <ScoreBlock
+        label="Computer"
+        score={state.scores.computer}
+        active={state.turn === 'computer'}
+        thinking={computerThinking}
+        align="right"
+      />
     </div>
   );
 }
@@ -20,11 +29,13 @@ function ScoreBlock({
   label,
   score,
   active,
+  thinking,
   align = 'left',
 }: {
   label: string;
   score: number;
   active: boolean;
+  thinking?: boolean;
   align?: 'left' | 'right';
 }) {
   return (
@@ -37,11 +48,42 @@ function ScoreBlock({
         {label}
         {align === 'left' && active && <ActiveDot />}
       </div>
-      <div className="font-display text-[30px] font-bold leading-none text-ink">{score}</div>
+      <div className="flex items-center gap-1.5" style={{ justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}>
+        <div className="font-display text-[30px] font-bold leading-none text-ink">{score}</div>
+        <AnimatePresence>{thinking && <ThinkingDots />}</AnimatePresence>
+      </div>
     </div>
   );
 }
 
 function ActiveDot() {
-  return <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />;
+  return (
+    <motion.span
+      layoutId="active-turn-dot"
+      transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+      className="pulse-dot h-1.5 w-1.5 rounded-full bg-accent"
+      aria-hidden
+    />
+  );
+}
+
+function ThinkingDots() {
+  return (
+    <motion.span
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.6 }}
+      className="mb-1 flex items-end gap-0.5"
+      aria-label="Computer is thinking"
+    >
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          className="h-1.5 w-1.5 rounded-full bg-accent"
+          animate={{ y: [0, -4, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15, ease: 'easeInOut' }}
+        />
+      ))}
+    </motion.span>
+  );
 }
