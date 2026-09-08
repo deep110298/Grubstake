@@ -9,7 +9,6 @@ import {
   canCall,
   canDrawReplacement,
   canPlayCards,
-  DECLARE_THRESHOLD,
   drawReplacement,
   playCards,
 } from '@/lib/multiplayer/engine';
@@ -21,6 +20,7 @@ import WildCardRevealModal from '@/components/leastcount/WildCardRevealModal';
 import MPScoreboard from './MPScoreboard';
 import MPRoundEndModal from './MPRoundEndModal';
 import MPGameOverModal from './MPGameOverModal';
+import MPPauseModal from './MPPauseModal';
 
 const DEAL_SPRING = { type: 'spring' as const, stiffness: 320, damping: 26 };
 const CALL_REVEAL_DELAY = 2200;
@@ -46,6 +46,7 @@ export default function MultiplayerGameBoard({
 }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [showRules, setShowRules] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [localOverride, setLocalOverride] = useState<MPGameState | null>(null);
   const [revealRoundEnd, setRevealRoundEnd] = useState(false);
   const [prevRoundEndKey, setPrevRoundEndKey] = useState<string | null>(null);
@@ -104,20 +105,6 @@ export default function MultiplayerGameBoard({
     });
   }
 
-  function statusText(): string {
-    if (display.phase === 'round-end' || display.phase === 'game-over') return '';
-    if (iAmEliminated) return `You're out — watching ${display.names[display.turn]} and the rest play it out.`;
-    if (yourTurnToAct) {
-      if (selected.length > 0) return 'Tap "Play" to discard the selected card(s).';
-      if (!canCallNow) {
-        return `Choose a card from your hand to play. (You need ${DECLARE_THRESHOLD} or less to call — you have ${myHandValue}.)`;
-      }
-      return 'Choose a card from your hand to play, or call Least Count.';
-    }
-    if (yourTurnToDraw) return 'Doesn’t match — draw a replacement card.';
-    return `Waiting for ${display.names[display.turn]}…`;
-  }
-
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
@@ -130,6 +117,13 @@ export default function MultiplayerGameBoard({
             <span className="mono-label inline-flex items-center gap-2 rounded-full bg-wild px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
               WILD · {display.jokerRank}
             </span>
+            <button
+              type="button"
+              onClick={() => setPaused(true)}
+              className="mono-label text-[11px] text-ink-muted hover:text-ink"
+            >
+              Pause
+            </button>
             <button
               type="button"
               onClick={() => setShowRules(true)}
@@ -195,8 +189,6 @@ export default function MultiplayerGameBoard({
           )}
         </section>
 
-        <p className="text-center text-sm text-ink-soft">{statusText()}</p>
-
         {!iAmEliminated && (
           <>
             <section className="flex flex-col items-center gap-2.5">
@@ -253,6 +245,8 @@ export default function MultiplayerGameBoard({
       </div>
 
       {showRules && <RulesModal variant="friends" onClose={() => setShowRules(false)} />}
+
+      {paused && <MPPauseModal onResume={() => setPaused(false)} onLeave={onLeave} />}
 
       {display.phase === 'round-end' && display.lastRoundResult && !revealRoundEnd && (
         <CallAnnouncement callerLabel={display.names[display.lastRoundResult.caller]} />
