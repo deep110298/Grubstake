@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, IBM_Plex_Mono } from "next/font/google";
-import ThemeToggle, { THEME_STORAGE_KEY } from "@/components/ThemeToggle";
+import ThemeToggle from "@/components/ThemeToggle";
+import { THEME_STORAGE_KEY } from "@/lib/theme";
 import "./globals.css";
 
 const outfit = Outfit({

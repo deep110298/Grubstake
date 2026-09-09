@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useState } from 'react';
-
-export const THEME_STORAGE_KEY = 'leastcount_theme';
+import { THEME_STORAGE_KEY } from '@/lib/theme';
 
 // Light unless the user has explicitly turned dark on — never inferred
 // from the OS/browser preference.
