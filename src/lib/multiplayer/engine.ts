@@ -169,9 +169,9 @@ export function call(state: MPGameState, caller: string): MPGameState {
   const values: Record<string, number> = {};
   for (const seat of participants) values[seat] = handValue(state.hands[seat], state.jokerRank);
 
-  // The caller must be strictly the lowest — an exact tie counts against them.
+  // A tie goes to the caller — being tied for lowest still counts as correct.
   const othersMin = Math.min(...participants.filter((s) => s !== caller).map((s) => values[s]));
-  const correct = values[caller] < othersMin;
+  const correct = values[caller] <= othersMin;
 
   const pointsAwarded: Record<string, number> = Object.fromEntries(participants.map((seat) => [seat, 0]));
   if (correct) {

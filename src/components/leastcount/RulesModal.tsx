@@ -33,10 +33,10 @@ export default function RulesModal({
         <p><strong className="text-ink">Playing a set:</strong> if you hold two or more cards of the same rank, you can play them together the same way. If they don&apos;t match the pile, you still only draw a single replacement card no matter how many you played.</p>
         <p><strong className="text-ink">Calling:</strong> you can only call once your hand totals {declareThreshold} or less, and you must call instead of playing a card that turn.</p>
         {isComputer ? (
-          <p>If you&apos;re right, your opponent scores their hand&apos;s value and you score nothing. If you&apos;re wrong, only you are penalized {INCORRECT_CALL_PENALTY} points — your opponent&apos;s score doesn&apos;t change either way. An exact tie is scored as a win for the computer.</p>
+          <p>If you&apos;re right — a tie counts as right too — your opponent scores their hand&apos;s value and you score nothing. If you&apos;re wrong, only you are penalized {INCORRECT_CALL_PENALTY} points — your opponent&apos;s score doesn&apos;t change either way.</p>
         ) : (
           <>
-            <p>To be right, your hand has to be strictly the lowest — an exact tie with anyone else counts as a wrong call. If you&apos;re right, everyone else scores their hand&apos;s value and you score nothing. If you&apos;re wrong, only you are penalized {INCORRECT_CALL_PENALTY} points — nobody else&apos;s score changes that round.</p>
+            <p>To be right, your hand has to be the lowest — a tie for lowest still counts as right. If you&apos;re right, everyone else scores their hand&apos;s value and you score nothing. If you&apos;re wrong, only you are penalized {INCORRECT_CALL_PENALTY} points — nobody else&apos;s score changes that round.</p>
             <p><strong className="text-ink">Winning:</strong> once a player&apos;s total reaches or passes the limit, they&apos;re eliminated and the rest keep playing. The last player left standing wins.</p>
           </>
         )}

@@ -146,9 +146,8 @@ export function call(state: GameState, caller: PlayerId): GameState {
     computer: handValue(state.hands.computer, state.jokerRank),
   };
 
-  // A hand that ties the opponent's is scored as a computer win.
-  const roundWinner: PlayerId = values.player >= values.computer ? 'computer' : 'player';
-  const correct = caller === roundWinner;
+  // A tie goes to the caller — being tied for lowest still counts as correct.
+  const correct = values[caller] <= values[OTHER[caller]];
 
   const pointsAwarded: Record<PlayerId, number> = { player: 0, computer: 0 };
   if (correct) {

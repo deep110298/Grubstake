@@ -115,7 +115,10 @@ export default function GameBoard({ daily }: { daily?: DailyModeProps } = {}) {
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 pt-14">
+      <div
+        className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 ${daily ? 'pt-4' : 'pt-14'}`}
+      >
+
         {daily && (
           <span className="mono-label mx-auto inline-flex items-center gap-1.5 rounded-full border border-ember bg-ember-soft px-3 py-1 text-[10px] font-bold text-ember-shadow">
             🔥 Daily challenge · Day {daily.day}
