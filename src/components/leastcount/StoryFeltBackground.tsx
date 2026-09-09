@@ -1,10 +1,15 @@
-// A fixed card-table backdrop for Story Mode's two map screens — deliberately
-// not theme-reactive (same reasoning PlayingCard's paper tokens use: a felt
-// table doesn't turn into a different table because the app's theme changed).
-// Purely decorative, absolutely positioned to fill a `relative` ancestor.
+// A fixed card-table backdrop for Story Mode's screens — deliberately not
+// theme-reactive (same reasoning PlayingCard's paper tokens use: a felt
+// table doesn't turn into a different table because the app's theme
+// changed). Pinned with `fixed` rather than `absolute` so it always spans
+// the true device viewport (including under the notch/status bar, now that
+// layout.tsx sets viewportFit: "cover") regardless of how tall the
+// scrollable content around it grows — an `absolute inset-0` sized to a
+// tall scrolling parent left the safe-area strip showing body's plain
+// canvas color instead of the felt.
 export default function StoryFeltBackground() {
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 overflow-hidden">
       <div
         className="absolute inset-0"
         style={{
