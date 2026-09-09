@@ -6,14 +6,16 @@ export default function RoundEndModal({
   state,
   result,
   playerName,
+  computerName,
   onContinue,
 }: {
   state: GameState;
   result: RoundResult;
   playerName: string;
+  computerName: string;
   onContinue: () => void;
 }) {
-  const callerLabel = result.caller === 'player' ? playerName : 'Computer';
+  const callerLabel = result.caller === 'player' ? playerName : computerName;
 
   return (
     <Modal>
@@ -41,7 +43,7 @@ export default function RoundEndModal({
           highlighted={result.caller === 'player'}
         />
         <HandSummary
-          label="Computer"
+          label={computerName}
           cards={result.hands.computer}
           jokerRank={result.jokerRank}
           value={result.values.computer}

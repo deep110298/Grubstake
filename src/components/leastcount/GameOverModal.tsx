@@ -8,10 +8,12 @@ import Modal from './Modal';
 export default function GameOverModal({
   state,
   playerName,
+  computerName,
   onPlayAgain,
 }: {
   state: GameState;
   playerName: string;
+  computerName: string;
   onPlayAgain: () => void;
 }) {
   const router = useRouter();
@@ -31,7 +33,7 @@ export default function GameOverModal({
             {won ? 'Congratulations, Winner!' : 'Better luck next time'}
           </h2>
           <p className="text-sm text-ink-muted">
-            Final score — {playerName}: {state.scores.player} &middot; Computer: {state.scores.computer}
+            Final score — {playerName}: {state.scores.player} &middot; {computerName}: {state.scores.computer}
           </p>
         </div>
         <div className="mt-5 flex flex-col gap-3">

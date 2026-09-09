@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { computerTakeTurn, type Difficulty } from '@/lib/leastCount/ai';
+import { randomComputerName } from '@/lib/leastCount/computerNames';
 import { handValue, sortHand } from '@/lib/leastCount/deck';
 import {
   call,
@@ -33,6 +34,7 @@ const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: 'Easy', medium: 'Me
 export default function GameBoard() {
   const [state, setState] = useState<GameState | null>(null);
   const [playerName, setPlayerName] = useState('You');
+  const [computerName, setComputerName] = useState('Computer');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [selected, setSelected] = useState<string[]>([]);
   const [showRules, setShowRules] = useState(false);
@@ -75,6 +77,7 @@ export default function GameBoard() {
         initialDifficulty={difficulty}
         onStart={({ name, target, difficulty: chosenDifficulty }) => {
           setPlayerName(name);
+          setComputerName(randomComputerName(name));
           setDifficulty(chosenDifficulty);
           setState(newGame(target));
         }}
@@ -104,7 +107,7 @@ export default function GameBoard() {
     <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
-        <Scoreboard state={state} playerName={playerName} />
+        <Scoreboard state={state} playerName={playerName} computerName={computerName} />
 
         <div className="-mt-2 flex items-center justify-between">
           <button
@@ -125,7 +128,7 @@ export default function GameBoard() {
 
         <section className="flex flex-col items-center gap-2 pt-1">
           <span className="mono-label text-[11px] text-ink-soft">
-            Computer · {DIFFICULTY_LABEL[difficulty]} · {state.hands.computer.length} cards
+            {computerName} · {DIFFICULTY_LABEL[difficulty]} · {state.hands.computer.length} cards
           </span>
           <div className="flex gap-1.5" key={state.roundNumber}>
             <AnimatePresence mode="popLayout">
@@ -225,6 +228,7 @@ export default function GameBoard() {
               ))}
             </AnimatePresence>
           </div>
+          <span className="mono-label text-[11px] text-ink-soft">{playerName}</span>
         </section>
 
         <div className="flex gap-2.5 pb-1 pt-1">
@@ -264,7 +268,7 @@ export default function GameBoard() {
       )}
 
       {state.phase === 'round-end' && state.lastRoundResult && !revealRoundEnd && (
-        <CallAnnouncement callerLabel={state.lastRoundResult.caller === 'player' ? playerName : 'Computer'} />
+        <CallAnnouncement callerLabel={state.lastRoundResult.caller === 'player' ? playerName : computerName} />
       )}
 
       {state.phase === 'round-end' && state.lastRoundResult && revealRoundEnd && (
@@ -272,12 +276,18 @@ export default function GameBoard() {
           state={state}
           result={state.lastRoundResult}
           playerName={playerName}
+          computerName={computerName}
           onContinue={() => setState((current) => (current ? startNextRound(current) : current))}
         />
       )}
 
       {state.phase === 'game-over' && (
-        <GameOverModal state={state} playerName={playerName} onPlayAgain={() => setState(newGame(state.target))} />
+        <GameOverModal
+          state={state}
+          playerName={playerName}
+          computerName={computerName}
+          onPlayAgain={() => setState(newGame(state.target))}
+        />
       )}
     </div>
   );
