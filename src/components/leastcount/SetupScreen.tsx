@@ -39,13 +39,13 @@ export default function SetupScreen({
   return (
     <div className="flex min-h-dvh flex-col items-center bg-canvas px-6 pb-5 pt-1.5 text-ink">
       <div className="flex w-full max-w-sm items-center justify-between">
-        <Link href="/" className="mono-label text-xs text-ink-muted hover:text-ink">
+        <Link href="/" className="mono-label text-xs text-ink-soft hover:text-ink">
           ← Home
         </Link>
         <button
           type="button"
           onClick={() => setShowRules(true)}
-          className="mono-label text-xs text-ink-muted hover:text-ink"
+          className="mono-label text-xs text-ink-soft hover:text-ink"
         >
           Rules
         </button>
@@ -60,7 +60,7 @@ export default function SetupScreen({
         </div>
 
         <div className="flex flex-col gap-2 rounded-[22px] border border-hairline bg-surface-sunken p-5">
-          <label htmlFor="player-name" className="mono-label text-[11px] text-ink-muted">
+          <label htmlFor="player-name" className="mono-label text-[11px] text-ink-soft">
             Your name
           </label>
           <input
@@ -74,7 +74,7 @@ export default function SetupScreen({
         </div>
 
         <div className="flex flex-col gap-3.5 rounded-[22px] border border-hairline bg-surface-sunken p-5">
-          <div className="mono-label text-[11px] text-ink-muted">Play to</div>
+          <div className="mono-label text-[11px] text-ink-soft">Play to</div>
           <div className="flex gap-2.5">
             {TARGET_OPTIONS.map((option) => (
               <button
@@ -95,7 +95,7 @@ export default function SetupScreen({
             First to {target} points loses. A wrong call costs you {INCORRECT_CALL_PENALTY}.
           </p>
 
-          <div className="mt-1 mono-label text-[11px] text-ink-muted">Difficulty</div>
+          <div className="mt-1 mono-label text-[11px] text-ink-soft">Difficulty</div>
           <div className="flex gap-2.5">
             {DIFFICULTY_OPTIONS.map((option) => (
               <button
@@ -115,7 +115,7 @@ export default function SetupScreen({
         </div>
 
         <div className="flex flex-col gap-3.5 rounded-[22px] border border-hairline bg-surface-sunken p-5">
-          <div className="mono-label text-[11px] text-ink-muted">The three rules</div>
+          <div className="mono-label text-[11px] text-ink-soft">The three rules</div>
           {RULES.map((rule, i) => (
             <div key={rule} className="flex items-start gap-3">
               <div className="mono-label flex h-6 w-6 flex-none items-center justify-center rounded-lg bg-hairline text-xs font-bold text-accent">

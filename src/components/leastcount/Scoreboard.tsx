@@ -8,7 +8,7 @@ export default function Scoreboard({ state, playerName }: { state: GameState; pl
   return (
     <div className="flex items-center justify-between gap-3 rounded-[20px] border border-hairline bg-surface-sunken px-[18px] py-3.5">
       <ScoreBlock label={playerName} score={state.scores.player} active={state.turn === 'player'} />
-      <div className="mono-label flex flex-col items-center gap-1 text-center text-[11px] leading-tight text-ink-muted">
+      <div className="mono-label flex flex-col items-center gap-1 text-center text-[11px] leading-tight text-ink-soft">
         <div>Round {state.roundNumber}</div>
         <div className="text-ink-soft">Limit {state.target}</div>
         <div className="mt-0.5 rounded-full bg-wild px-3 py-1 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
@@ -42,7 +42,7 @@ function ScoreBlock({
   return (
     <div className={align === 'right' ? 'text-right' : 'text-left'}>
       <div
-        className="mono-label flex items-center gap-1.5 text-[11px] text-ink-muted"
+        className="mono-label flex items-center gap-1.5 text-[11px] text-ink-soft"
         style={{ justifyContent: align === 'right' ? 'flex-end' : 'flex-start' }}
       >
         {align === 'right' && active && <ActiveDot />}

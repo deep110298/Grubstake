@@ -110,21 +110,21 @@ export default function GameBoard() {
           <button
             type="button"
             onClick={() => setPaused(true)}
-            className="mono-label text-[11px] text-ink-muted hover:text-ink"
+            className="mono-label text-[11px] text-ink-soft hover:text-ink"
           >
             Pause
           </button>
           <button
             type="button"
             onClick={() => setShowRules(true)}
-            className="mono-label text-[11px] text-ink-muted hover:text-ink"
+            className="mono-label text-[11px] text-ink-soft hover:text-ink"
           >
             Rules
           </button>
         </div>
 
         <section className="flex flex-col items-center gap-2 pt-1">
-          <span className="mono-label text-[11px] text-ink-muted">
+          <span className="mono-label text-[11px] text-ink-soft">
             Computer · {DIFFICULTY_LABEL[difficulty]} · {state.hands.computer.length} cards
           </span>
           <div className="flex gap-1.5" key={state.roundNumber}>
@@ -159,7 +159,7 @@ export default function GameBoard() {
                 >
                   <CardBack size="lg" />
                 </button>
-                <span className="mono-label text-[10px] text-ink-muted">Deck · {state.drawPile.length}</span>
+                <span className="mono-label text-[10px] text-ink-soft">Deck · {state.drawPile.length}</span>
               </div>
               {state.pendingPickup && (
                 <div className="flex flex-col items-center gap-2">
@@ -177,7 +177,7 @@ export default function GameBoard() {
             <>
               <div className="flex flex-col items-center gap-2">
                 <CardBack size="lg" />
-                <span className="mono-label text-[10px] text-ink-muted">Deck · {state.drawPile.length}</span>
+                <span className="mono-label text-[10px] text-ink-soft">Deck · {state.drawPile.length}</span>
               </div>
               <div className="flex flex-col items-center gap-2">
                 {discardTop ? (
@@ -192,14 +192,14 @@ export default function GameBoard() {
                 ) : (
                   <div className="h-24 w-16 rounded-lg border border-dashed border-hairline" />
                 )}
-                <span className="mono-label text-[10px] text-ink-muted">Discard</span>
+                <span className="mono-label text-[10px] text-ink-soft">Discard</span>
               </div>
             </>
           )}
         </section>
 
         <section className="flex flex-col items-center gap-2.5">
-          <span className="mono-label flex items-center gap-2 text-[11px] text-ink-muted">
+          <span className="mono-label flex items-center gap-2 text-[11px] text-ink-soft">
             Your hand
             <span className="text-accent">{yourHandValue} pts</span>
           </span>

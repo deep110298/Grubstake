@@ -72,7 +72,7 @@ export default function Home() {
         <button
           type="button"
           onClick={() => setShowRules(true)}
-          className="mono-label pt-1.5 text-xs text-ink-muted hover:text-ink"
+          className="mono-label pt-1.5 text-xs text-ink-soft hover:text-ink"
         >
           How to play
         </button>

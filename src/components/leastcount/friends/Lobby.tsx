@@ -59,14 +59,14 @@ export default function Lobby({
       <button
         type="button"
         onClick={() => router.push('/')}
-        className="mono-label w-full max-w-sm self-center text-xs text-ink-muted hover:text-ink"
+        className="mono-label w-full max-w-sm self-center text-xs text-ink-soft hover:text-ink"
       >
         ← Leave room
       </button>
 
       <div className="flex w-full max-w-sm flex-1 flex-col gap-3.5 pt-4.5">
         <div className="flex flex-col items-center gap-2 rounded-[22px] border border-hairline bg-surface-sunken p-4">
-          <span className="mono-label text-[11px] text-ink-muted">Room code</span>
+          <span className="mono-label text-[11px] text-ink-soft">Room code</span>
           <span className="font-mono text-4xl font-bold leading-none tracking-[0.14em] text-accent">{room.code}</span>
           <div className="flex w-full gap-2.5 pt-1.5">
             <button
@@ -87,7 +87,7 @@ export default function Lobby({
         </div>
 
         <div className="flex flex-col gap-2.5">
-          <div className="mono-label flex items-center justify-between text-[11px] text-ink-muted">
+          <div className="mono-label flex items-center justify-between text-[11px] text-ink-soft">
             <span>Seated</span>
             <span>
               {players.length} / {room.max_players}
@@ -115,7 +115,7 @@ export default function Lobby({
         </div>
 
         <div className="flex items-center justify-between rounded-2xl border border-hairline bg-surface-sunken px-4 py-3">
-          <span className="mono-label text-[11px] text-ink-muted">Play to</span>
+          <span className="mono-label text-[11px] text-ink-soft">Play to</span>
           <span className="rounded-[11px] border-2 border-accent bg-accent/10 px-3.5 py-1.5 font-display text-sm font-bold text-accent">
             {room.target_score}
           </span>

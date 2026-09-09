@@ -34,7 +34,7 @@ export default function MPScoreboard({ state }: { state: MPGameState }) {
               </div>
             </div>
             {isOut ? (
-              <span className="mono-label text-[9px] text-ink-muted">out</span>
+              <span className="mono-label text-[9px] text-ink-soft">out</span>
             ) : isTurn ? (
               <span className="flex items-center gap-1.5">
                 <ThinkingDots label={`${state.names[seat]} is thinking`} />

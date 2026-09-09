@@ -42,7 +42,7 @@ export default function MPGameOverModal({
               <span className="call-pop text-6xl" aria-hidden>
                 🥲
               </span>
-              <span className="mono-label rounded-full bg-hairline px-4 py-1.5 text-[11px] font-bold text-ink-muted">
+              <span className="mono-label rounded-full bg-hairline px-4 py-1.5 text-[11px] font-bold text-ink-soft">
                 NOT THIS TIME
               </span>
               <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">So close!</h2>

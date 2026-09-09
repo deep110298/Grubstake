@@ -51,7 +51,7 @@ export default function RoundEndModal({
       </div>
 
       <div className="mt-3 flex items-center justify-between rounded-2xl border border-hairline bg-surface-sunken px-[18px] py-3.5">
-        <span className="mono-label text-[11px] text-ink-muted">Running total</span>
+        <span className="mono-label text-[11px] text-ink-soft">Running total</span>
         <span className="font-display text-base font-bold text-ink">
           {state.scores.player} <span className="text-ink-muted">·</span> {state.scores.computer}
         </span>
@@ -88,7 +88,7 @@ function HandSummary({
       className={`rounded-[18px] border p-4 ${highlighted ? 'border-accent bg-surface-sunken' : 'border-hairline bg-surface-sunken'}`}
     >
       <div className="flex items-center justify-between">
-        <span className={`mono-label text-[11px] ${highlighted ? 'text-accent' : 'text-ink-muted'}`}>
+        <span className={`mono-label text-[11px] ${highlighted ? 'text-accent' : 'text-ink-soft'}`}>
           {label} · {value} pts
         </span>
         <span className={`font-display text-lg font-bold ${points > 0 ? 'text-wild' : 'text-accent'}`}>+{points}</span>

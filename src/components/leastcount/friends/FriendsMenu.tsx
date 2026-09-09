@@ -101,7 +101,7 @@ export default function FriendsMenu() {
 
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center gap-6 bg-canvas px-4 py-10 text-center">
-      <Link href="/" className="mono-label absolute left-4 top-4 text-xs text-ink-muted hover:text-ink">
+      <Link href="/" className="mono-label absolute left-4 top-4 text-xs text-ink-soft hover:text-ink">
         ← Back
       </Link>
 
@@ -172,7 +172,7 @@ export default function FriendsMenu() {
             style={{ animationDelay: '160ms' }}
           >
             <div>
-              <label className="mono-label text-[11px] text-ink-muted">Your name</label>
+              <label className="mono-label text-[11px] text-ink-soft">Your name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -183,7 +183,7 @@ export default function FriendsMenu() {
             </div>
 
             <div>
-              <div className="mono-label text-[11px] text-ink-muted">Players</div>
+              <div className="mono-label text-[11px] text-ink-soft">Players</div>
               <div className="mt-1.5 grid grid-cols-5 gap-2">
                 {PLAYER_OPTIONS.map((option) => (
                   <button
@@ -203,7 +203,7 @@ export default function FriendsMenu() {
             </div>
 
             <div>
-              <div className="mono-label text-[11px] text-ink-muted">Play to</div>
+              <div className="mono-label text-[11px] text-ink-soft">Play to</div>
               <div className="mt-1.5 flex gap-2">
                 {TARGET_OPTIONS.map((option) => (
                   <button
@@ -261,7 +261,7 @@ export default function FriendsMenu() {
             style={{ animationDelay: '160ms' }}
           >
             <div>
-              <label className="mono-label text-[11px] text-ink-muted">Your name</label>
+              <label className="mono-label text-[11px] text-ink-soft">Your name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -271,7 +271,7 @@ export default function FriendsMenu() {
               />
             </div>
             <div>
-              <label className="mono-label text-[11px] text-ink-muted">Room code</label>
+              <label className="mono-label text-[11px] text-ink-soft">Room code</label>
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}

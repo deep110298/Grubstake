@@ -42,7 +42,7 @@ export default function MPRoundEndModal({
               className={`rounded-[18px] border p-4 ${highlighted ? 'border-accent bg-surface-sunken' : 'border-hairline bg-surface-sunken'}`}
             >
               <div className="flex items-center justify-between">
-                <span className={`mono-label text-[11px] ${highlighted ? 'text-accent' : 'text-ink-muted'}`}>
+                <span className={`mono-label text-[11px] ${highlighted ? 'text-accent' : 'text-ink-soft'}`}>
                   {state.names[seat]} · {result.values[seat]} pts
                   {justEliminated && <span className="ml-1.5 text-wild">OUT</span>}
                 </span>
@@ -63,7 +63,7 @@ export default function MPRoundEndModal({
       </div>
 
       <div className="mt-3 flex flex-col gap-1 rounded-2xl border border-hairline bg-surface-sunken p-3.5">
-        <span className="mono-label px-1 pb-0.5 text-[11px] text-ink-muted">Running total</span>
+        <span className="mono-label px-1 pb-0.5 text-[11px] text-ink-soft">Running total</span>
         {ranked.map((seat) => {
           const isOut = state.eliminated.includes(seat);
           return (
