@@ -61,7 +61,7 @@ export default function Home() {
           href="/play/computer"
           className="rounded-[18px] bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"
         >
-          Play vs Computer
+          Play now
         </Link>
         <Link
           href="/play/friends"
