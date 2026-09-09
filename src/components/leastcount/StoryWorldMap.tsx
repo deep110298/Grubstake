@@ -44,23 +44,27 @@ export default function StoryWorldMap() {
 
   return (
     <div className="min-h-dvh" style={CASINO_BACKDROP_STYLE}>
-      <div className="mx-auto flex w-full max-w-md flex-col px-4 pb-10 pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <div className="flex items-center justify-between pr-12">
-          <Link href="/" className="mono-label text-xs font-bold text-white">
-            ← Home
-          </Link>
-          {status && (
-            <span className="mono-label rounded-full bg-black/35 px-2.5 py-1 text-xs font-bold text-[#ffd873]">
-              ⭐ {status.totalStars}/{TOTAL_LEVELS * 3}
-            </span>
-          )}
-        </div>
+      <div className="bg-gradient-to-b from-black/70 via-black/40 to-transparent pb-8 pt-[max(0.75rem,env(safe-area-inset-top))]">
+        <div className="mx-auto w-full max-w-md px-4">
+          <div className="flex items-center justify-between pr-12">
+            <Link href="/" className="mono-label text-xs font-bold text-white">
+              ← Home
+            </Link>
+            {status && (
+              <span className="mono-label rounded-full bg-black/35 px-2.5 py-1 text-xs font-bold text-[#ffd873]">
+                ⭐ {status.totalStars}/{TOTAL_LEVELS * 3}
+              </span>
+            )}
+          </div>
 
-        <div className="mt-3 flex flex-col gap-1 text-center">
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-white">Story Mode</h1>
-          <p className="text-sm text-white/60">Clear every level in a world to unlock the next.</p>
+          <div className="mt-3 flex flex-col gap-1 text-center">
+            <h1 className="font-display text-3xl font-extrabold tracking-tight text-white">Story Mode</h1>
+            <p className="text-sm text-white/70">Clear every level in a world to unlock the next.</p>
+          </div>
         </div>
+      </div>
 
+      <div className="mx-auto flex w-full max-w-md flex-col px-4 pb-10">
         {!status ? (
           <div className="flex flex-1 items-center justify-center py-20 text-sm text-white/60">Loading progress…</div>
         ) : (
