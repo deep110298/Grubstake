@@ -27,7 +27,6 @@ import RoundEndModal from './RoundEndModal';
 import RulesModal from './RulesModal';
 import Scoreboard from './Scoreboard';
 import SetupScreen from './SetupScreen';
-import StoryFeltBackground from './StoryFeltBackground';
 import StoryResultModal from './StoryResultModal';
 import WildCardRevealModal from './WildCardRevealModal';
 
@@ -131,13 +130,10 @@ export default function GameBoard({
   }
 
   return (
-    <div
-      className={`relative flex min-h-dvh flex-col overflow-hidden bg-canvas ${story ? 'story-dark' : ''}`}
-    >
-      {story && <StoryFeltBackground />}
+    <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
       <div
-        className={`relative mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 ${daily || story ? 'pt-4' : 'pt-14'}`}
+        className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 ${daily || story ? 'pt-4' : 'pt-14'}`}
       >
 
         {daily && (
