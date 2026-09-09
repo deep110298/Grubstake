@@ -4,11 +4,11 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 
 export const THEME_STORAGE_KEY = 'leastcount_theme';
 
+// Light unless the user has explicitly turned dark on — never inferred
+// from the OS/browser preference.
 function getCurrentTheme(): 'light' | 'dark' {
   if (typeof document === 'undefined') return 'light';
-  const explicit = document.documentElement.getAttribute('data-theme');
-  if (explicit === 'dark' || explicit === 'light') return explicit;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
 }
 
 export default function ThemeToggle() {

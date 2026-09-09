@@ -52,39 +52,9 @@
   --card-red: #d8324a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --canvas: #1c1a1f;
-    --surface: #232025;
-    --surface-warm: #27242a;
-    --surface-sunken: #29262b;
-    --surface-sunken-alt: #2d2a2f;
-
-    --ink: #f2f0ee;
-    --ink-soft: #cac6c9;
-    --ink-muted: #a29da3;
-    --ink-faint: #79747a;
-    --ink-faintest: #5f5a60;
-
-    --accent: #2e9aa3;
-    --accent-shadow: #1a6b72;
-
-    --wild: #d9599b;
-    --wild-shadow: #9c3c6f;
-
-    --ember: #f0954c;
-    --ember-shadow: #b56724;
-    --ember-soft: #3a2a1d;
-
-    --suit-red: #e2586c;
-    --error: #e2586c;
-
-    --hairline: #37333a;
-    --hairline-strong: #423e45;
-    --input-border: #423e45;
-  }
-}
-
+/* Light is the default regardless of the OS/browser theme preference —
+   dark only ever applies when the user explicitly turns it on via the
+   toggle (which stamps this attribute and persists the choice). */
 :root[data-theme="dark"] {
   --canvas: #1c1a1f;
   --surface: #232025;
