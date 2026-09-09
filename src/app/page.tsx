@@ -6,6 +6,7 @@ import Link from 'next/link';
 import DailyChallengeCard from '@/components/leastcount/DailyChallengeCard';
 import PlayingCard from '@/components/leastcount/PlayingCard';
 import RulesModal from '@/components/leastcount/RulesModal';
+import StoryModeCard from '@/components/leastcount/StoryModeCard';
 
 const HERO_CARDS = [
   { id: 'hero-a', suit: 'spades', rank: 'A', tilt: '-12deg', lift: '10px', delay: '0ms', floatDelay: '0s' },
@@ -59,6 +60,7 @@ export default function Home() {
 
       <div className="fade-up flex w-full max-w-xs flex-col gap-3" style={{ animationDelay: '460ms' }}>
         <DailyChallengeCard />
+        <StoryModeCard />
         <Link
           href="/play/computer"
           className="rounded-[18px] bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"

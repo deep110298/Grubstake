@@ -16,6 +16,7 @@ import {
   playCards,
   startNextRound,
 } from '@/lib/leastCount/engine';
+import { worldName } from '@/lib/leastCount/storyLevels';
 import type { GameState } from '@/lib/leastCount/types';
 import CallAnnouncement from './CallAnnouncement';
 import DailyResultModal from './DailyResultModal';
@@ -26,6 +27,7 @@ import RoundEndModal from './RoundEndModal';
 import RulesModal from './RulesModal';
 import Scoreboard from './Scoreboard';
 import SetupScreen from './SetupScreen';
+import StoryResultModal from './StoryResultModal';
 import WildCardRevealModal from './WildCardRevealModal';
 
 const DEAL_SPRING = { type: 'spring' as const, stiffness: 320, damping: 26 };
@@ -40,11 +42,26 @@ interface DailyModeProps {
   day: number;
 }
 
-export default function GameBoard({ daily }: { daily?: DailyModeProps } = {}) {
-  const [state, setState] = useState<GameState | null>(daily?.state ?? null);
-  const [playerName, setPlayerName] = useState(daily?.playerName ?? 'You');
-  const [computerName, setComputerName] = useState(daily?.computerName ?? 'Computer');
-  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+interface StoryModeProps {
+  state: GameState;
+  playerName: string;
+  computerName: string;
+  globalId: number;
+  world: number;
+  levelInWorld: number;
+  difficulty: Difficulty;
+  aiStrengthBonus: number;
+}
+
+export default function GameBoard({
+  daily,
+  story,
+}: { daily?: DailyModeProps; story?: StoryModeProps } = {}) {
+  const [state, setState] = useState<GameState | null>(daily?.state ?? story?.state ?? null);
+  const [playerName, setPlayerName] = useState(daily?.playerName ?? story?.playerName ?? 'You');
+  const [computerName, setComputerName] = useState(daily?.computerName ?? story?.computerName ?? 'Computer');
+  const [difficulty, setDifficulty] = useState<Difficulty>(story?.difficulty ?? 'medium');
+  const aiStrengthBonus = story?.aiStrengthBonus ?? 0;
   const [selected, setSelected] = useState<string[]>([]);
   const [showRules, setShowRules] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -55,12 +72,12 @@ export default function GameBoard({ daily }: { daily?: DailyModeProps } = {}) {
   useEffect(() => {
     if (!state || paused || state.turn !== 'computer' || state.phase !== 'awaiting-action') return;
     computerTimer.current = setTimeout(() => {
-      setState((current) => (current ? computerTakeTurn(current, difficulty) : current));
+      setState((current) => (current ? computerTakeTurn(current, difficulty, aiStrengthBonus) : current));
     }, 800);
     return () => {
       if (computerTimer.current) clearTimeout(computerTimer.current);
     };
-  }, [state, paused, difficulty]);
+  }, [state, paused, difficulty, aiStrengthBonus]);
 
   // Reset whether the round breakdown has been revealed yet whenever we
   // enter (or leave) the round-end phase — adjusting state during render
@@ -116,12 +133,17 @@ export default function GameBoard({ daily }: { daily?: DailyModeProps } = {}) {
     <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
       <div
-        className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 ${daily ? 'pt-4' : 'pt-14'}`}
+        className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 ${daily || story ? 'pt-4' : 'pt-14'}`}
       >
 
         {daily && (
           <span className="mono-label mx-auto inline-flex items-center gap-1.5 rounded-full border border-ember bg-ember-soft px-3 py-1 text-[10px] font-bold text-ember-shadow">
             🔥 Daily challenge · Day {daily.day}
+          </span>
+        )}
+        {story && (
+          <span className="mono-label mx-auto inline-flex items-center gap-1.5 rounded-full border border-wild bg-wild/10 px-3 py-1 text-[10px] font-bold text-wild">
+            ♠ {worldName(story.world)} · Level {story.levelInWorld}/20
           </span>
         )}
         <Scoreboard state={state} playerName={playerName} computerName={computerName} />
@@ -312,7 +334,18 @@ export default function GameBoard({ daily }: { daily?: DailyModeProps } = {}) {
         />
       )}
 
-      {state.phase === 'game-over' && !daily && (
+      {state.phase === 'game-over' && story && (
+        <StoryResultModal
+          globalId={story.globalId}
+          won={state.winner === 'player'}
+          playerScore={state.scores.player}
+          target={state.target}
+          rival={computerName}
+          onPlayAgain={() => setState(newGame(state.target))}
+        />
+      )}
+
+      {state.phase === 'game-over' && !daily && !story && (
         <GameOverModal
           state={state}
           playerName={playerName}

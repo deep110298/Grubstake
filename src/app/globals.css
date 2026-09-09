@@ -18,6 +18,7 @@
 
   --wild: #c2367f;
   --wild-shadow: #8f2861;
+  --wild-soft: #fbe6f1;
 
   --ember: #dd7322;
   --ember-shadow: #a4530f;
@@ -73,6 +74,7 @@
 
   --wild: #d9599b;
   --wild-shadow: #9c3c6f;
+  --wild-soft: #3a1d2e;
 
   --ember: #f0954c;
   --ember-shadow: #b56724;
@@ -104,6 +106,7 @@
 
   --color-wild: var(--wild);
   --color-wild-shadow: var(--wild-shadow);
+  --color-wild-soft: var(--wild-soft);
 
   --color-ember: var(--ember);
   --color-ember-shadow: var(--ember-shadow);

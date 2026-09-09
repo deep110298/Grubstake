@@ -65,11 +65,17 @@ function bestGroup(hand: PlayingCard[], jokerRank: Rank): PlayingCard[] {
 // Plays a full computer turn (call, or play card(s) plus any required
 // replacement draw) and returns the resulting state. Only reads public
 // information and the computer's own hand.
-export function computerTakeTurn(state: GameState, difficulty: Difficulty = 'medium'): GameState {
+//
+// strengthBonus (0 by default, so every existing caller is unaffected) lets
+// a caller push the computer beyond the 'hard' preset without adding a new
+// discrete tier — Story Mode uses it so its later worlds keep getting
+// harder past world 2, where 'hard' alone would otherwise plateau.
+export function computerTakeTurn(state: GameState, difficulty: Difficulty = 'medium', strengthBonus: number = 0): GameState {
   const hand = state.hands.computer;
   const total = handValue(hand, state.jokerRank);
 
-  if (Math.random() < callChance(total, difficulty)) {
+  const callChanceWithBonus = Math.min(1, callChance(total, difficulty) + strengthBonus * 0.15);
+  if (Math.random() < callChanceWithBonus) {
     return call(state, 'computer');
   }
 
@@ -100,6 +106,7 @@ export function computerTakeTurn(state: GameState, difficulty: Difficulty = 'med
   }
 
   const pickup = afterPlay.pendingPickup;
-  const source = pickup && cardValue(pickup, state.jokerRank) < PICKUP_VALUE_THRESHOLD[difficulty] ? 'pickup' : 'deck';
+  const pickupThreshold = PICKUP_VALUE_THRESHOLD[difficulty] + strengthBonus * 3;
+  const source = pickup && cardValue(pickup, state.jokerRank) < pickupThreshold ? 'pickup' : 'deck';
   return drawReplacement(afterPlay, 'computer', source);
 }
