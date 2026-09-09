@@ -7,12 +7,17 @@ export const DECLARE_THRESHOLD = 10;
 
 const OTHER: Record<PlayerId, PlayerId> = { player: 'computer', computer: 'player' };
 
-function dealRound(target: number, scores: Record<PlayerId, number>, roundNumber: number): GameState {
-  const deck = shuffle(createDeck());
+function dealRound(
+  target: number,
+  scores: Record<PlayerId, number>,
+  roundNumber: number,
+  rng: () => number = Math.random
+): GameState {
+  const deck = shuffle(createDeck(), rng);
 
   // One card is drawn out of the deck to fix the joker rank for the round —
   // that specific card is set aside and isn't dealt or drawn this round.
-  const jokerIndex = Math.floor(Math.random() * deck.length);
+  const jokerIndex = Math.floor(rng() * deck.length);
   const jokerRank: Rank = deck[jokerIndex].rank;
   const pool = [...deck.slice(0, jokerIndex), ...deck.slice(jokerIndex + 1)];
 
@@ -37,8 +42,8 @@ function dealRound(target: number, scores: Record<PlayerId, number>, roundNumber
   };
 }
 
-export function newGame(target: number): GameState {
-  return dealRound(target, { player: 0, computer: 0 }, 1);
+export function newGame(target: number, rng?: () => number): GameState {
+  return dealRound(target, { player: 0, computer: 0 }, 1, rng);
 }
 
 export function startNextRound(state: GameState): GameState {

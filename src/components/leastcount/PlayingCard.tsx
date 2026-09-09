@@ -58,8 +58,8 @@ export default function PlayingCard({
       onClick={onClick}
       disabled={!onClick || disabled}
       className={`relative flex flex-shrink-0 flex-col items-center justify-center rounded-lg font-mono font-bold transition-transform ${SIZE_CLASSES[size]} ${
-        isRaised ? 'bg-surface-warm' : 'bg-surface'
-      } ${isRed ? 'text-suit-red' : isPhysicalJoker ? 'text-wild' : 'text-ink'} ${borderClasses} ${
+        isRaised ? 'bg-card-paper-warm' : 'bg-card-paper'
+      } ${isRed ? 'text-card-red' : isPhysicalJoker ? 'text-wild' : 'text-card-ink'} ${borderClasses} ${
         onClick && !disabled ? 'cursor-pointer hover:-translate-y-1' : ''
       } ${disabled ? 'opacity-50' : ''}`}
       aria-pressed={selected}
@@ -105,7 +105,7 @@ export function CardBack({ size = 'md' }: { size?: PlayingCardProps['size'] }) {
         <span className={`font-mono leading-none text-white ${BACK_SPADE_SIZE[size ?? 'md']}`}>♠</span>
       </div>
       {size !== 'sm' && (
-        <span className="mono-label text-[6.5px] leading-none text-ink-soft">Least Count</span>
+        <span className="mono-label text-[6.5px] leading-none text-card-ink-soft">Least Count</span>
       )}
     </div>
   );

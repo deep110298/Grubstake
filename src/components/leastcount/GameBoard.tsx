@@ -18,6 +18,7 @@ import {
 } from '@/lib/leastCount/engine';
 import type { GameState } from '@/lib/leastCount/types';
 import CallAnnouncement from './CallAnnouncement';
+import DailyResultModal from './DailyResultModal';
 import GameOverModal from './GameOverModal';
 import PauseModal from './PauseModal';
 import PlayingCard, { CardBack } from './PlayingCard';
@@ -31,10 +32,18 @@ const DEAL_SPRING = { type: 'spring' as const, stiffness: 320, damping: 26 };
 const CALL_REVEAL_DELAY = 2200;
 const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
 
-export default function GameBoard() {
-  const [state, setState] = useState<GameState | null>(null);
-  const [playerName, setPlayerName] = useState('You');
-  const [computerName, setComputerName] = useState('Computer');
+interface DailyModeProps {
+  state: GameState;
+  playerName: string;
+  computerName: string;
+  dateKey: string;
+  day: number;
+}
+
+export default function GameBoard({ daily }: { daily?: DailyModeProps } = {}) {
+  const [state, setState] = useState<GameState | null>(daily?.state ?? null);
+  const [playerName, setPlayerName] = useState(daily?.playerName ?? 'You');
+  const [computerName, setComputerName] = useState(daily?.computerName ?? 'Computer');
   const [difficulty, setDifficulty] = useState<Difficulty>('medium');
   const [selected, setSelected] = useState<string[]>([]);
   const [showRules, setShowRules] = useState(false);
@@ -106,7 +115,12 @@ export default function GameBoard() {
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 pt-14">
+        {daily && (
+          <span className="mono-label mx-auto inline-flex items-center gap-1.5 rounded-full border border-ember bg-ember-soft px-3 py-1 text-[10px] font-bold text-ember-shadow">
+            🔥 Daily challenge · Day {daily.day}
+          </span>
+        )}
         <Scoreboard state={state} playerName={playerName} computerName={computerName} />
 
         <div className="-mt-2 flex items-center justify-between">
@@ -259,11 +273,15 @@ export default function GameBoard() {
       {paused && (
         <PauseModal
           onResume={() => setPaused(false)}
-          onRestart={() => {
-            setState(newGame(state.target));
-            setSelected([]);
-            setPaused(false);
-          }}
+          onRestart={
+            daily
+              ? undefined
+              : () => {
+                  setState(newGame(state.target));
+                  setSelected([]);
+                  setPaused(false);
+                }
+          }
         />
       )}
 
@@ -281,7 +299,17 @@ export default function GameBoard() {
         />
       )}
 
-      {state.phase === 'game-over' && (
+      {state.phase === 'game-over' && daily && (
+        <DailyResultModal
+          dateKey={daily.dateKey}
+          day={daily.day}
+          rival={computerName}
+          rounds={state.roundNumber}
+          result={state.winner === 'player' ? 'win' : 'loss'}
+        />
+      )}
+
+      {state.phase === 'game-over' && !daily && (
         <GameOverModal
           state={state}
           playerName={playerName}

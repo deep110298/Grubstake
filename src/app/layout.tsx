@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, IBM_Plex_Mono } from "next/font/google";
+import ThemeToggle, { THEME_STORAGE_KEY } from "@/components/ThemeToggle";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -45,9 +46,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${outfit.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-canvas text-ink font-sans">
+        <ThemeToggle />
         {children}
       </body>
     </html>

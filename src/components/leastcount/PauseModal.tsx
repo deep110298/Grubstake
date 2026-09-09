@@ -8,7 +8,7 @@ export default function PauseModal({
   onRestart,
 }: {
   onResume: () => void;
-  onRestart: () => void;
+  onRestart?: () => void;
 }) {
   const router = useRouter();
 
@@ -27,13 +27,15 @@ export default function PauseModal({
         >
           Resume
         </button>
-        <button
-          type="button"
-          onClick={onRestart}
-          className="w-full rounded-2xl border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
-        >
-          Restart game
-        </button>
+        {onRestart && (
+          <button
+            type="button"
+            onClick={onRestart}
+            className="w-full rounded-2xl border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
+          >
+            Restart game
+          </button>
+        )}
         <button
           type="button"
           onClick={() => router.push('/')}

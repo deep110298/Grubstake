@@ -19,6 +19,10 @@
   --wild: #c2367f;
   --wild-shadow: #8f2861;
 
+  --ember: #dd7322;
+  --ember-shadow: #a4530f;
+  --ember-soft: #fbeee0;
+
   --suit-red: #d8324a;
   --error: #d8324a;
 
@@ -36,6 +40,80 @@
     #efebe3 0 9px,
     #e6e1d7 9px 18px
   );
+
+  /* A physical playing card doesn't turn into dark paper because the app's
+     theme changed — these stay fixed across both themes on purpose, unlike
+     every other token above, and back the card face/back specifically
+     (see PlayingCard.tsx). */
+  --card-paper: #ffffff;
+  --card-paper-warm: #fdfbf7;
+  --card-ink: #16141a;
+  --card-ink-soft: #45404b;
+  --card-red: #d8324a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #1c1a1f;
+    --surface: #232025;
+    --surface-warm: #27242a;
+    --surface-sunken: #29262b;
+    --surface-sunken-alt: #2d2a2f;
+
+    --ink: #f2f0ee;
+    --ink-soft: #cac6c9;
+    --ink-muted: #a29da3;
+    --ink-faint: #79747a;
+    --ink-faintest: #5f5a60;
+
+    --accent: #2e9aa3;
+    --accent-shadow: #1a6b72;
+
+    --wild: #d9599b;
+    --wild-shadow: #9c3c6f;
+
+    --ember: #f0954c;
+    --ember-shadow: #b56724;
+    --ember-soft: #3a2a1d;
+
+    --suit-red: #e2586c;
+    --error: #e2586c;
+
+    --hairline: #37333a;
+    --hairline-strong: #423e45;
+    --input-border: #423e45;
+  }
+}
+
+:root[data-theme="dark"] {
+  --canvas: #1c1a1f;
+  --surface: #232025;
+  --surface-warm: #27242a;
+  --surface-sunken: #29262b;
+  --surface-sunken-alt: #2d2a2f;
+
+  --ink: #f2f0ee;
+  --ink-soft: #cac6c9;
+  --ink-muted: #a29da3;
+  --ink-faint: #79747a;
+  --ink-faintest: #5f5a60;
+
+  --accent: #2e9aa3;
+  --accent-shadow: #1a6b72;
+
+  --wild: #d9599b;
+  --wild-shadow: #9c3c6f;
+
+  --ember: #f0954c;
+  --ember-shadow: #b56724;
+  --ember-soft: #3a2a1d;
+
+  --suit-red: #e2586c;
+  --error: #e2586c;
+
+  --hairline: #37333a;
+  --hairline-strong: #423e45;
+  --input-border: #423e45;
 }
 
 @theme inline {
@@ -57,6 +135,10 @@
   --color-wild: var(--wild);
   --color-wild-shadow: var(--wild-shadow);
 
+  --color-ember: var(--ember);
+  --color-ember-shadow: var(--ember-shadow);
+  --color-ember-soft: var(--ember-soft);
+
   --color-suit-red: var(--suit-red);
   --color-error: var(--error);
 
@@ -69,6 +151,12 @@
   --color-card-back-b: var(--card-back-b);
   --color-card-back-border: var(--card-back-border);
 
+  --color-card-paper: var(--card-paper);
+  --color-card-paper-warm: var(--card-paper-warm);
+  --color-card-ink: var(--card-ink);
+  --color-card-ink-soft: var(--card-ink-soft);
+  --color-card-red: var(--card-red);
+
   --font-sans: var(--font-outfit);
   --font-mono: var(--font-ibm-plex-mono);
   --font-display: var(--font-outfit);
@@ -78,6 +166,7 @@ body {
   background: var(--canvas);
   color: var(--ink);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .mono-label {

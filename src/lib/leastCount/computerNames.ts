@@ -1,4 +1,4 @@
-const COMPUTER_NAMES = [
+export const COMPUTER_NAMES = [
   'Ace',
   'Joker',
   'Maverick',

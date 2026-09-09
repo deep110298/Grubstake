@@ -3,6 +3,7 @@
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
+import DailyChallengeCard from '@/components/leastcount/DailyChallengeCard';
 import PlayingCard from '@/components/leastcount/PlayingCard';
 import RulesModal from '@/components/leastcount/RulesModal';
 
@@ -57,6 +58,7 @@ export default function Home() {
       </div>
 
       <div className="fade-up flex w-full max-w-xs flex-col gap-3" style={{ animationDelay: '460ms' }}>
+        <DailyChallengeCard />
         <Link
           href="/play/computer"
           className="rounded-[18px] bg-accent px-4 py-[18px] text-center font-bold text-lg text-white shadow-[0_5px_0_var(--accent-shadow)] transition-transform active:translate-y-[3px] active:shadow-[0_2px_0_var(--accent-shadow)]"

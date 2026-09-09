@@ -3,37 +3,14 @@
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, useSyncExternalStore } from 'react';
+import { useState } from 'react';
 import PlayingCard from '@/components/leastcount/PlayingCard';
 import { createRoom, joinRoom, RoomServiceError } from '@/lib/multiplayer/roomService';
 import { getPlayerId } from '@/lib/multiplayer/playerId';
+import { savePlayerName, useSavedPlayerName } from '@/lib/playerName';
 
 const PLAYER_OPTIONS = [2, 3, 4, 5, 6];
 const TARGET_OPTIONS = [50, 100, 150];
-const NAME_STORAGE_KEY = 'leastcount_player_name';
-
-function getSavedName(): string {
-  if (typeof window === 'undefined') return '';
-  return window.localStorage.getItem(NAME_STORAGE_KEY) ?? '';
-}
-
-function noopSubscribe() {
-  return () => {};
-}
-
-function getServerSnapshot() {
-  return '';
-}
-
-// SSR-safe: '' on the server and the first client render (matching, so no
-// hydration mismatch), then the saved name right after.
-function useSavedName(): string {
-  return useSyncExternalStore(noopSubscribe, getSavedName, getServerSnapshot);
-}
-
-function saveName(name: string) {
-  window.localStorage.setItem(NAME_STORAGE_KEY, name);
-}
 
 type View = 'choice' | 'create' | 'join';
 
@@ -43,7 +20,7 @@ export default function FriendsMenu() {
   // The saved name is '' on the server and the first client render (no
   // hydration mismatch); nameOverride takes over once the user edits it, or
   // once the real saved value arrives, whichever the input last reflects.
-  const savedName = useSavedName();
+  const savedName = useSavedPlayerName();
   const [nameOverride, setNameOverride] = useState<string | null>(null);
   const name = nameOverride ?? savedName;
   const setName = setNameOverride;
@@ -61,7 +38,7 @@ export default function FriendsMenu() {
     setBusy(true);
     setError(null);
     try {
-      saveName(name.trim());
+      savePlayerName(name.trim());
       const playerId = getPlayerId();
       const roomCode = await createRoom({
         hostPlayerId: playerId,
@@ -88,7 +65,7 @@ export default function FriendsMenu() {
     setBusy(true);
     setError(null);
     try {
-      saveName(name.trim());
+      savePlayerName(name.trim());
       const playerId = getPlayerId();
       const roomCode = code.trim().toUpperCase();
       await joinRoom({ code: roomCode, playerId, name: name.trim() });
