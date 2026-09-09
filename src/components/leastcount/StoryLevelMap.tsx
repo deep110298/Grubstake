@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getWorldLevels, worldName, LEVELS_PER_WORLD, type StoryLevelConfig } from '@/lib/leastCount/storyLevels';
 import { getStars, isLevelUnlocked, type Stars } from '@/lib/leastCount/storyProgress';
+import StoryFeltBackground from './StoryFeltBackground';
+import StoryPathConnector from './StoryPathConnector';
 
 interface LevelStatus {
   config: StoryLevelConfig;
@@ -34,26 +36,28 @@ export default function StoryLevelMap({ world }: { world: number }) {
   const clearedCount = levels?.filter((l) => l.stars > 0).length ?? 0;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-canvas">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-4 pb-10 pt-4">
+    <div className="relative flex min-h-dvh flex-col overflow-hidden">
+      <StoryFeltBackground />
+      <div className="relative mx-auto flex w-full max-w-md flex-1 flex-col px-4 pb-10 pt-4">
         <div className="flex items-center justify-between pr-10">
-          <Link href="/play/story" className="mono-label text-xs text-ink-soft hover:text-ink">
+          <Link href="/play/story" className="mono-label text-xs text-[#cdd8d6] hover:text-white">
             ← Worlds
           </Link>
-          <span className="mono-label text-xs text-ink-soft">
+          <span className="mono-label text-xs text-[#dfe6e4]">
             {clearedCount}/{LEVELS_PER_WORLD} cleared
           </span>
         </div>
 
         <div className="mt-3 text-center">
-          <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink">{worldName(world)}</h1>
-          <p className="text-sm text-ink-muted">World {world}</p>
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-[#fbfaf7]">{worldName(world)}</h1>
+          <p className="text-sm text-[#d9a8c2]">World {world}</p>
         </div>
 
         {!levels ? (
-          <div className="flex flex-1 items-center justify-center text-sm text-ink-muted">Loading levels…</div>
+          <div className="flex flex-1 items-center justify-center text-sm text-[#a9bcb9]">Loading levels…</div>
         ) : (
-          <div className="mt-8 flex flex-col items-center gap-7">
+          <div className="relative mt-8 flex flex-col items-center gap-7">
+            <StoryPathConnector count={levels.length} />
             {levels.map((l, i) => (
               <LevelNode key={l.config.globalId} status={l} offset={OFFSETS[i % OFFSETS.length]} />
             ))}
@@ -68,13 +72,16 @@ function LevelNode({ status, offset }: { status: LevelStatus; offset: string }) 
   const cleared = status.stars > 0;
   const content = (
     <div
-      className={`flex h-14 w-14 flex-none items-center justify-center rounded-full border-2 font-display text-base font-extrabold shadow-[0_4px_0_rgba(20,16,24,0.13)] ${
+      className={`flex h-14 w-14 flex-none items-center justify-center rounded-full border-2 font-display text-base font-extrabold ${
         cleared
-          ? 'border-wild bg-wild text-white'
-          : status.unlocked
-            ? 'border-wild bg-surface text-wild'
-            : 'border-hairline-strong bg-surface-sunken text-ink-faint'
+          ? 'border-wild text-white shadow-[0_4px_0_rgba(20,16,24,0.25)]'
+          : // Unlocked-but-not-cleared is always exactly the next level to
+            // play, since levels unlock strictly in sequence — worth a glow.
+            status.unlocked
+            ? 'border-wild bg-[#0d2b2e] text-[#f0c8dc] shadow-[0_0_0_8px_rgba(217,89,155,0.14),0_0_24px_rgba(217,89,155,0.35)]'
+            : 'border-white/15 bg-white/[0.06] text-white/35 backdrop-blur-sm'
       }`}
+      style={cleared ? { background: 'linear-gradient(155deg, #e777ac, #c2367f)' } : undefined}
     >
       {status.unlocked ? status.config.levelInWorld : '🔒'}
     </div>
