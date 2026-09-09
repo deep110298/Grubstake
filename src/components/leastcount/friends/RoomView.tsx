@@ -186,7 +186,6 @@ export default function RoomView({ code }: { code: string }) {
       <MultiplayerGameBoard
         state={room.game_state}
         code={roomCode}
-        background={room.background}
         myPlayerId={myPlayerId}
         isHost={isHost}
         onUpdate={handleUpdate}

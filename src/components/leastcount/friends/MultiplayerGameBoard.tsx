@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { backgroundCss } from '@/lib/multiplayer/backgrounds';
 import { handValue, sortHand } from '@/lib/multiplayer/deck';
 import {
   call,
@@ -29,7 +28,6 @@ const CALL_REVEAL_DELAY = 2200;
 export default function MultiplayerGameBoard({
   state,
   code,
-  background,
   myPlayerId,
   isHost,
   onUpdate,
@@ -39,7 +37,6 @@ export default function MultiplayerGameBoard({
 }: {
   state: MPGameState;
   code?: string;
-  background?: string;
   myPlayerId: string;
   isHost: boolean;
   onUpdate: (next: MPGameState) => Promise<void> | void;
@@ -113,7 +110,7 @@ export default function MultiplayerGameBoard({
   }
 
   return (
-    <div className="flex min-h-dvh flex-col" style={{ background: backgroundCss(background) }}>
+    <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center">

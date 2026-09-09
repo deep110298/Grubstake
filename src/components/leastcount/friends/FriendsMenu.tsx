@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useSyncExternalStore } from 'react';
 import PlayingCard from '@/components/leastcount/PlayingCard';
-import { ROOM_BACKGROUNDS, type RoomBackground } from '@/lib/multiplayer/backgrounds';
 import { createRoom, joinRoom, RoomServiceError } from '@/lib/multiplayer/roomService';
 import { getPlayerId } from '@/lib/multiplayer/playerId';
 
@@ -50,7 +49,6 @@ export default function FriendsMenu() {
   const setName = setNameOverride;
   const [maxPlayers, setMaxPlayers] = useState(4);
   const [targetScore, setTargetScore] = useState(100);
-  const [background, setBackground] = useState<RoomBackground>('default');
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -70,7 +68,6 @@ export default function FriendsMenu() {
         hostName: name.trim(),
         maxPlayers,
         targetScore,
-        background,
       });
       router.push(`/room/${roomCode}`);
     } catch (err) {
@@ -221,25 +218,6 @@ export default function FriendsMenu() {
                   >
                     {option}
                   </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="mono-label text-[11px] text-ink-muted">Background</div>
-              <div className="mt-1.5 flex gap-2.5">
-                {ROOM_BACKGROUNDS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setBackground(option.value)}
-                    aria-label={option.label}
-                    aria-pressed={background === option.value}
-                    className={`h-9 w-9 flex-1 rounded-full border-2 transition-all active:scale-95 ${
-                      background === option.value ? 'border-accent shadow-[0_0_0_3px_rgba(10,111,120,0.15)]' : 'border-hairline-strong'
-                    }`}
-                    style={{ background: option.css }}
-                  />
                 ))}
               </div>
             </div>
