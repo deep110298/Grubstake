@@ -11,15 +11,12 @@ const CARPET_TILE = `<svg xmlns='http://www.w3.org/2000/svg' width='64' height='
   <path d='M0 32 L32 0 M32 0 L64 32 M64 32 L32 64 M32 64 L0 32' stroke='${CASINO_GOLD_DIM}' stroke-width='0.6' opacity='0.16'/>
 </svg>`;
 
-// A tiled carpet pattern (repeats to any content height) plus a glow fixed
-// near the top — CSS background layers instead of a full-height SVG, so it
-// works for a short grid or a long scrolling list alike.
+// A tiled carpet pattern that repeats to any content height — a CSS
+// background layer instead of a full-height SVG, so it works for a short
+// grid or a long scrolling list alike.
 export const CASINO_BACKDROP_STYLE: CSSProperties = {
   backgroundColor: '#160709',
-  backgroundImage: [
-    'radial-gradient(480px 360px at 50% 0%, #3d1220, rgba(42,13,23,0) 70%)',
-    `url("data:image/svg+xml,${encodeURIComponent(CARPET_TILE)}")`,
-  ].join(', '),
-  backgroundRepeat: 'no-repeat, repeat',
-  backgroundSize: 'auto, 64px 64px',
+  backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(CARPET_TILE)}")`,
+  backgroundRepeat: 'repeat',
+  backgroundSize: '64px 64px',
 };
