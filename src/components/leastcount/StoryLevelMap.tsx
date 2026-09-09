@@ -36,7 +36,7 @@ export default function StoryLevelMap({ world }: { world: number }) {
   return (
     <div className="flex min-h-dvh flex-col bg-canvas">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-4 pb-10 pt-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pr-10">
           <Link href="/play/story" className="mono-label text-xs text-ink-soft hover:text-ink">
             ← Worlds
           </Link>
