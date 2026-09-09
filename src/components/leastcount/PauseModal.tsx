@@ -6,9 +6,11 @@ import Modal from './Modal';
 export default function PauseModal({
   onResume,
   onRestart,
+  backToLevelsHref,
 }: {
   onResume: () => void;
   onRestart?: () => void;
+  backToLevelsHref?: string;
 }) {
   const router = useRouter();
 
@@ -34,6 +36,15 @@ export default function PauseModal({
             className="w-full rounded-2xl border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
           >
             Restart game
+          </button>
+        )}
+        {backToLevelsHref && (
+          <button
+            type="button"
+            onClick={() => router.push(backToLevelsHref)}
+            className="w-full rounded-2xl border-2 border-hairline-strong px-4 py-4 text-center font-semibold text-lg text-ink transition-colors hover:bg-surface-sunken"
+          >
+            Back to level select
           </button>
         )}
         <button

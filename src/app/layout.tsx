@@ -41,6 +41,10 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
+  // Lets full-bleed backgrounds (Story Mode's felt table) paint under the
+  // notch/status-bar safe area instead of leaving it as an uncovered gap —
+  // see ThemeToggle's safe-area-aware top offset for the other half of this.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
