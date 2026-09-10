@@ -25,7 +25,7 @@ import MPPauseModal from './MPPauseModal';
 
 const DEAL_SPRING = { type: 'spring' as const, stiffness: 320, damping: 26 };
 const CALL_REVEAL_DELAY = 2200;
-const BUBBLE_LIFETIME = 2800;
+const BUBBLE_LIFETIME = 5000;
 
 export default function MultiplayerGameBoard({
   state,
@@ -143,56 +143,41 @@ export default function MultiplayerGameBoard({
 
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center">
-          <span className="mono-label text-[11px] text-ink-soft">{code ? `Room ${code}` : ''}</span>
+          <div className="flex items-center gap-2">
+            <span className="mono-label text-[11px] text-ink-soft">{code ? `Room ${code}` : ''}</span>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setChatOpen((v) => !v)}
+                aria-label="Quick chat"
+                className="flex h-7 w-7 items-center justify-center rounded-full border border-hairline bg-surface text-sm transition-transform active:scale-90"
+              >
+                💬
+              </button>
+              {chatOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setChatOpen(false)} />
+                  <div className="absolute left-0 top-9 z-50 flex w-max flex-col gap-0.5 rounded-2xl border border-hairline bg-surface p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
+                    {QUICK_CHAT_MESSAGES.map((msg) => (
+                      <button
+                        key={msg}
+                        type="button"
+                        onClick={() => sendQuickChat(msg)}
+                        className="whitespace-nowrap rounded-xl px-3 py-1.5 text-left text-xs font-semibold text-ink transition-colors hover:bg-surface-sunken"
+                      >
+                        {msg}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
           <span className="mono-label inline-flex items-center gap-2 rounded-full bg-wild px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
             WILD · {display.jokerRank}
           </span>
-          <div className="relative justify-self-end">
-            <button
-              type="button"
-              onClick={() => setChatOpen((v) => !v)}
-              aria-label="Quick chat"
-              className="flex h-7 w-7 items-center justify-center rounded-full border border-hairline bg-surface text-sm transition-transform active:scale-90"
-            >
-              💬
-            </button>
-            {chatOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setChatOpen(false)} />
-                <div className="absolute right-0 top-9 z-50 flex w-max flex-col gap-0.5 rounded-2xl border border-hairline bg-surface p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
-                  {QUICK_CHAT_MESSAGES.map((msg) => (
-                    <button
-                      key={msg}
-                      type="button"
-                      onClick={() => sendQuickChat(msg)}
-                      className="whitespace-nowrap rounded-xl px-3 py-1.5 text-left text-xs font-semibold text-ink transition-colors hover:bg-surface-sunken"
-                    >
-                      {msg}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
+          <div aria-hidden />
         </div>
-
-        {bubbles.length > 0 && (
-          <div className="flex flex-col items-center gap-1.5">
-            <AnimatePresence>
-              {bubbles.map((b) => (
-                <motion.div
-                  key={b.id}
-                  initial={{ opacity: 0, y: -10, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="mono-label max-w-[85%] rounded-full bg-ink/90 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_4px_10px_rgba(0,0,0,0.2)]"
-                >
-                  <span className="text-white/55">{b.name}:</span> {b.text}
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        )}
 
         <MPScoreboard state={display} />
 
@@ -215,9 +200,27 @@ export default function MultiplayerGameBoard({
         </div>
 
         <section
-          className="flex flex-1 items-center justify-center gap-6 rounded-[24px]"
+          className="relative flex flex-1 items-center justify-center gap-6 rounded-[24px]"
           style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(10,111,120,0.09), transparent 65%)' }}
         >
+          {bubbles.length > 0 && (
+            <div className="pointer-events-none absolute inset-x-0 top-3 z-10 flex flex-col items-center gap-1.5 px-4">
+              <AnimatePresence>
+                {bubbles.map((b) => (
+                  <motion.div
+                    key={b.id}
+                    initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="mono-label max-w-[85%] rounded-full bg-ink/90 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_4px_10px_rgba(0,0,0,0.2)]"
+                  >
+                    <span className="text-white/55">{b.name}:</span> {b.text}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+
           {!iAmEliminated && yourTurnToDraw ? (
             <>
               <div className="flex flex-col items-center gap-2">
