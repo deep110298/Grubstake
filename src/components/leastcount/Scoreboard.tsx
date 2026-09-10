@@ -14,7 +14,7 @@ export default function Scoreboard({
   const computerThinking = state.turn === 'computer' && state.phase === 'awaiting-action';
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-[20px] border border-hairline bg-surface-sunken px-[18px] py-3.5">
+    <div className="flex items-center justify-between gap-3 rounded-[20px] border border-hairline bg-surface-sunken py-3.5 pl-[18px] pr-11">
       <ScoreBlock label={playerName} score={state.scores.player} active={state.turn === 'player'} />
       <div className="mono-label flex flex-col items-center gap-1 text-center text-[11px] leading-tight text-ink-soft">
         <div>Round {state.roundNumber}</div>
