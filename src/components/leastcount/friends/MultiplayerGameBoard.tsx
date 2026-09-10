@@ -153,40 +153,45 @@ export default function MultiplayerGameBoard({
 
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))]">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center">
-          <div className="flex items-center gap-2">
-            <span className="mono-label text-[11px] text-ink-soft">{code ? `Room ${code}` : ''}</span>
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setChatOpen((v) => !v)}
-                aria-label="Quick chat"
-                className="flex h-7 w-7 items-center justify-center rounded-full border border-hairline bg-surface text-sm transition-transform active:scale-90"
-              >
-                💬
-              </button>
-              {chatOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setChatOpen(false)} />
-                  <div className="absolute left-0 top-9 z-50 flex w-max flex-col gap-0.5 rounded-2xl border border-hairline bg-surface p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
-                    {QUICK_CHAT_MESSAGES.map((msg) => (
-                      <button
-                        key={msg}
-                        type="button"
-                        onClick={() => sendQuickChat(msg)}
-                        className="whitespace-nowrap rounded-xl px-3 py-1.5 text-left text-xs font-semibold text-ink transition-colors hover:bg-surface-sunken"
-                      >
-                        {msg}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+          <span className="mono-label text-[11px] text-ink-soft">{code ? `Room ${code}` : ''}</span>
           <span className="mono-label inline-flex items-center gap-2 rounded-full bg-wild px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
             WILD · {display.jokerRank}
           </span>
-          <div aria-hidden />
+          <div className="relative justify-self-end">
+            <button
+              type="button"
+              onClick={() => setChatOpen((v) => !v)}
+              aria-label="Quick chat"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-hairline bg-surface text-ink-soft transition-transform active:scale-90"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
+                <path
+                  d="M4 5.5C4 4.67 4.67 4 5.5 4h13c.83 0 1.5.67 1.5 1.5v9c0 .83-.67 1.5-1.5 1.5H9l-4 3.5v-3.5H5.5C4.67 16 4 15.33 4 14.5v-9Z"
+                  fill="currentColor"
+                />
+                <circle cx="8.5" cy="9.75" r="1" fill="var(--surface)" />
+                <circle cx="12" cy="9.75" r="1" fill="var(--surface)" />
+                <circle cx="15.5" cy="9.75" r="1" fill="var(--surface)" />
+              </svg>
+            </button>
+            {chatOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setChatOpen(false)} />
+                <div className="absolute right-0 top-9 z-50 flex w-max flex-col gap-0.5 rounded-2xl border border-hairline bg-surface p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
+                  {QUICK_CHAT_MESSAGES.map((msg) => (
+                    <button
+                      key={msg}
+                      type="button"
+                      onClick={() => sendQuickChat(msg)}
+                      className="whitespace-nowrap rounded-xl px-3 py-1.5 text-left text-xs font-semibold text-ink transition-colors hover:bg-surface-sunken"
+                    >
+                      {msg}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         <MPScoreboard state={display} />
