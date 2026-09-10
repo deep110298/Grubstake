@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { handValue, sortHand } from '@/lib/multiplayer/deck';
 import {
@@ -12,6 +12,7 @@ import {
   drawReplacement,
   playCards,
 } from '@/lib/multiplayer/engine';
+import { QUICK_CHAT_MESSAGES, subscribeToQuickChat, type QuickChatEvent } from '@/lib/multiplayer/quickChat';
 import type { MPGameState } from '@/lib/multiplayer/types';
 import CallAnnouncement from '@/components/leastcount/CallAnnouncement';
 import PlayingCard, { CardBack } from '@/components/leastcount/PlayingCard';
@@ -24,6 +25,7 @@ import MPPauseModal from './MPPauseModal';
 
 const DEAL_SPRING = { type: 'spring' as const, stiffness: 320, damping: 26 };
 const CALL_REVEAL_DELAY = 2200;
+const BUBBLE_LIFETIME = 2800;
 
 export default function MultiplayerGameBoard({
   state,
@@ -50,6 +52,32 @@ export default function MultiplayerGameBoard({
   const [localOverride, setLocalOverride] = useState<MPGameState | null>(null);
   const [revealRoundEnd, setRevealRoundEnd] = useState(false);
   const [prevRoundEndKey, setPrevRoundEndKey] = useState<string | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [bubbles, setBubbles] = useState<(QuickChatEvent & { id: number })[]>([]);
+  const chatRef = useRef<ReturnType<typeof subscribeToQuickChat> | null>(null);
+
+  function pushBubble(event: QuickChatEvent) {
+    const id = Date.now() + Math.random();
+    setBubbles((current) => [...current, { ...event, id }]);
+    setTimeout(() => setBubbles((current) => current.filter((b) => b.id !== id)), BUBBLE_LIFETIME);
+  }
+
+  useEffect(() => {
+    if (!code) return;
+    const chat = subscribeToQuickChat(code, pushBubble);
+    chatRef.current = chat;
+    return () => {
+      chatRef.current = null;
+      chat.unsubscribe();
+    };
+  }, [code]);
+
+  function sendQuickChat(text: string) {
+    const event: QuickChatEvent = { playerId: myPlayerId, name: display.names[myPlayerId] ?? 'You', text };
+    chatRef.current?.send(event);
+    pushBubble(event);
+    setChatOpen(false);
+  }
 
   // Once the authoritative state from the server changes, drop any
   // optimistic override and pending selection for the turn that just ended.
@@ -110,16 +138,61 @@ export default function MultiplayerGameBoard({
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-canvas">
+    <div className="relative flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
+
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center">
           <span className="mono-label text-[11px] text-ink-soft">{code ? `Room ${code}` : ''}</span>
           <span className="mono-label inline-flex items-center gap-2 rounded-full bg-wild px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_2px_0_var(--wild-shadow)]">
             WILD · {display.jokerRank}
           </span>
-          <span />
+          <div className="relative justify-self-end">
+            <button
+              type="button"
+              onClick={() => setChatOpen((v) => !v)}
+              aria-label="Quick chat"
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-hairline bg-surface text-sm transition-transform active:scale-90"
+            >
+              💬
+            </button>
+            {chatOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setChatOpen(false)} />
+                <div className="absolute right-0 top-9 z-50 flex w-max flex-col gap-0.5 rounded-2xl border border-hairline bg-surface p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
+                  {QUICK_CHAT_MESSAGES.map((msg) => (
+                    <button
+                      key={msg}
+                      type="button"
+                      onClick={() => sendQuickChat(msg)}
+                      className="whitespace-nowrap rounded-xl px-3 py-1.5 text-left text-xs font-semibold text-ink transition-colors hover:bg-surface-sunken"
+                    >
+                      {msg}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
+
+        {bubbles.length > 0 && (
+          <div className="flex flex-col items-center gap-1.5">
+            <AnimatePresence>
+              {bubbles.map((b) => (
+                <motion.div
+                  key={b.id}
+                  initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="mono-label max-w-[85%] rounded-full bg-ink/90 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_4px_10px_rgba(0,0,0,0.2)]"
+                >
+                  <span className="text-white/55">{b.name}:</span> {b.text}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
 
         <MPScoreboard state={display} />
 
