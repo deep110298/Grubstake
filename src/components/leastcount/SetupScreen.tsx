@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { HAND_SIZE, INCORRECT_CALL_PENALTY, DECLARE_THRESHOLD } from '@/lib/leastCount/engine';
+import { HAND_SIZE, INCORRECT_CALL_PENALTY } from '@/lib/leastCount/engine';
 import type { Difficulty } from '@/lib/leastCount/ai';
 import RulesModal from './RulesModal';
 
@@ -12,12 +12,6 @@ const DIFFICULTY_OPTIONS: { value: Difficulty; label: string }[] = [
   { value: 'easy', label: 'Easy' },
   { value: 'medium', label: 'Medium' },
   { value: 'hard', label: 'Hard' },
-];
-
-const RULES = [
-  'Discard one card, or several of the same rank.',
-  'Match the pile and you skip the draw. Otherwise pick up.',
-  `Call at ${DECLARE_THRESHOLD} or less. Lowest hand wins the round.`,
 ];
 
 export default function SetupScreen({
@@ -112,18 +106,6 @@ export default function SetupScreen({
               </button>
             ))}
           </div>
-        </div>
-
-        <div className="flex flex-col gap-3.5 rounded-[22px] border border-hairline bg-surface-sunken p-5">
-          <div className="mono-label text-[11px] text-ink-soft">The three rules</div>
-          {RULES.map((rule, i) => (
-            <div key={rule} className="flex items-start gap-3">
-              <div className="mono-label flex h-6 w-6 flex-none items-center justify-center rounded-lg bg-hairline text-xs font-bold text-accent">
-                {i + 1}
-              </div>
-              <p className="text-sm leading-relaxed text-ink-soft">{rule}</p>
-            </div>
-          ))}
         </div>
 
         <div className="flex-1" />
