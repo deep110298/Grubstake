@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { getWorldLevels, worldName, WORLD_COUNT, TOTAL_LEVELS, LEVELS_PER_WORLD } from '@/lib/leastCount/storyLevels';
 import { getStars, getTotalStars, isWorldCleared, isWorldUnlocked } from '@/lib/leastCount/storyProgress';
 import { SNAKE_DESIGN_WIDTH, getSnakeHeight, getSnakePoints, buildSmoothPath, type SnakePoint } from '@/lib/leastCount/snakeLayout';
-import { STORY_GLOW_STYLE } from './storyBackdrop';
 
 interface WorldStatus {
   world: number;
@@ -53,8 +52,6 @@ export default function StoryWorldMap() {
 
   return (
     <div className="relative min-h-dvh bg-canvas">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[380px]" style={STORY_GLOW_STYLE} aria-hidden />
-
       <div className="mx-auto w-full max-w-md px-4 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <div className="flex items-center justify-between pr-12">
           <Link href="/" className="mono-label text-xs font-bold text-ink-soft hover:text-ink">

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getWorldLevels, worldName, LEVELS_PER_WORLD, type StoryLevelConfig } from '@/lib/leastCount/storyLevels';
 import { getStars, isLevelUnlocked, type Stars } from '@/lib/leastCount/storyProgress';
-import { STORY_GLOW_STYLE } from './storyBackdrop';
 
 interface LevelStatus {
   config: StoryLevelConfig;
@@ -42,8 +41,6 @@ export default function StoryLevelMap({ world }: { world: number }) {
 
   return (
     <div className="relative min-h-dvh bg-canvas">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[380px]" style={STORY_GLOW_STYLE} aria-hidden />
-
       <div className="sticky top-0 z-20 flex items-center justify-between gap-2 bg-canvas pb-3 pl-4 pr-12 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <Link href="/play/story" className="mono-label text-xs font-bold text-ink-soft hover:text-ink">
           ← Worlds
