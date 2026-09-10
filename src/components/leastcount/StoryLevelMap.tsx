@@ -41,7 +41,8 @@ export default function StoryLevelMap({ world }: { world: number }) {
   const currentIndex = levels?.findIndex((l) => l.unlocked && l.stars === 0) ?? -1;
 
   return (
-    <div className="min-h-dvh" style={CASINO_BACKDROP_STYLE}>
+    <div className="relative min-h-dvh">
+      <div className="pointer-events-none fixed inset-0 -z-10" style={CASINO_BACKDROP_STYLE} aria-hidden />
       <div className="sticky top-0 z-20 flex items-center justify-between gap-2 bg-gradient-to-b from-black/55 to-transparent pb-3 pl-4 pr-12 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <Link href="/play/story" className="mono-label text-xs font-bold text-white">
           ← Worlds

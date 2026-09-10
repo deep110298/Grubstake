@@ -43,7 +43,8 @@ export default function StoryWorldMap() {
   }, []);
 
   return (
-    <div className="min-h-dvh" style={CASINO_BACKDROP_STYLE}>
+    <div className="relative min-h-dvh">
+      <div className="pointer-events-none fixed inset-0 -z-10" style={CASINO_BACKDROP_STYLE} aria-hidden />
       <div className="bg-gradient-to-b from-black/70 via-black/40 to-transparent pb-8 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <div className="mx-auto w-full max-w-md px-4">
           <div className="flex items-center justify-between pr-12">
