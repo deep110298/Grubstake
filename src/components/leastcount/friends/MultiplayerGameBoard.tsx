@@ -230,7 +230,7 @@ export default function MultiplayerGameBoard({
                     initial={{ opacity: 0, y: -10, scale: 0.9 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className="mono-label max-w-[85%] rounded-full bg-ink/90 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_4px_10px_rgba(0,0,0,0.2)]"
+                    className="mono-label max-w-[85%] rounded-full bg-[#1c1a20]/90 px-3.5 py-1.5 text-[11px] font-bold text-white shadow-[0_4px_10px_rgba(0,0,0,0.2)]"
                   >
                     <span className="text-white/55">{b.name}:</span> {b.text}
                   </motion.div>
