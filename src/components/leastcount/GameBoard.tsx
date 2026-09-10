@@ -18,6 +18,8 @@ import {
 } from '@/lib/leastCount/engine';
 import { worldName } from '@/lib/leastCount/storyLevels';
 import type { GameState } from '@/lib/leastCount/types';
+import { hideGlobalThemeToggle, showGlobalThemeToggle } from '@/lib/themeToggleVisibility';
+import InlineThemeToggle from '@/components/InlineThemeToggle';
 import CallAnnouncement from './CallAnnouncement';
 import DailyResultModal from './DailyResultModal';
 import GameOverModal from './GameOverModal';
@@ -68,6 +70,15 @@ export default function GameBoard({
   const [revealRoundEnd, setRevealRoundEnd] = useState(false);
   const [prevRoundEndKey, setPrevRoundEndKey] = useState<string | null>(null);
   const computerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const gameStarted = state !== null;
+
+  // The board's own header has an inline toggle right under Rules — the
+  // fixed corner one would otherwise sit on top of the scoreboard.
+  useEffect(() => {
+    if (!gameStarted) return;
+    hideGlobalThemeToggle();
+    return () => showGlobalThemeToggle();
+  }, [gameStarted]);
 
   useEffect(() => {
     if (!state || paused || state.turn !== 'computer' || state.phase !== 'awaiting-action') return;
@@ -148,7 +159,7 @@ export default function GameBoard({
         )}
         <Scoreboard state={state} playerName={playerName} computerName={computerName} />
 
-        <div className="-mt-2 flex items-center justify-between">
+        <div className="-mt-2 flex items-start justify-between">
           <button
             type="button"
             onClick={() => setPaused(true)}
@@ -156,13 +167,16 @@ export default function GameBoard({
           >
             Pause
           </button>
-          <button
-            type="button"
-            onClick={() => setShowRules(true)}
-            className="mono-label text-[11px] text-ink-soft hover:text-ink"
-          >
-            Rules
-          </button>
+          <div className="flex flex-col items-end gap-1.5">
+            <button
+              type="button"
+              onClick={() => setShowRules(true)}
+              className="mono-label text-[11px] text-ink-soft hover:text-ink"
+            >
+              Rules
+            </button>
+            <InlineThemeToggle />
+          </div>
         </div>
 
         <section className="flex flex-col items-center gap-2 pt-1">

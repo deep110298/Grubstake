@@ -14,6 +14,8 @@ import {
 } from '@/lib/multiplayer/engine';
 import { QUICK_CHAT_MESSAGES, subscribeToQuickChat, type QuickChatEvent } from '@/lib/multiplayer/quickChat';
 import type { MPGameState } from '@/lib/multiplayer/types';
+import { hideGlobalThemeToggle, showGlobalThemeToggle } from '@/lib/themeToggleVisibility';
+import InlineThemeToggle from '@/components/InlineThemeToggle';
 import CallAnnouncement from '@/components/leastcount/CallAnnouncement';
 import PlayingCard, { CardBack } from '@/components/leastcount/PlayingCard';
 import RulesModal from '@/components/leastcount/RulesModal';
@@ -55,6 +57,14 @@ export default function MultiplayerGameBoard({
   const [chatOpen, setChatOpen] = useState(false);
   const [bubbles, setBubbles] = useState<(QuickChatEvent & { id: number })[]>([]);
   const chatRef = useRef<ReturnType<typeof subscribeToQuickChat> | null>(null);
+
+  // The board's own header has an inline toggle right under Rules — the
+  // fixed corner one would otherwise sit on top of the scoreboard, whose
+  // height varies with player count.
+  useEffect(() => {
+    hideGlobalThemeToggle();
+    return () => showGlobalThemeToggle();
+  }, []);
 
   function pushBubble(event: QuickChatEvent) {
     const id = Date.now() + Math.random();
@@ -181,7 +191,7 @@ export default function MultiplayerGameBoard({
 
         <MPScoreboard state={display} />
 
-        <div className="-mt-1 grid grid-cols-[1fr_auto_1fr] items-center">
+        <div className="-mt-1 grid grid-cols-[1fr_auto_1fr] items-start">
           <button
             type="button"
             onClick={() => setPaused(true)}
@@ -190,13 +200,16 @@ export default function MultiplayerGameBoard({
             Pause
           </button>
           <span className="mono-label text-[11px] text-ink-soft">Round {display.roundNumber}</span>
-          <button
-            type="button"
-            onClick={() => setShowRules(true)}
-            className="mono-label justify-self-end text-[11px] text-ink-soft hover:text-ink"
-          >
-            Rules
-          </button>
+          <div className="flex flex-col items-end gap-1.5 justify-self-end">
+            <button
+              type="button"
+              onClick={() => setShowRules(true)}
+              className="mono-label text-[11px] text-ink-soft hover:text-ink"
+            >
+              Rules
+            </button>
+            <InlineThemeToggle />
+          </div>
         </div>
 
         <section
