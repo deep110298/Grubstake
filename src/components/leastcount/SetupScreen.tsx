@@ -108,9 +108,7 @@ export default function SetupScreen({
           </div>
         </div>
 
-        <div className="flex-1" />
-
-        <div className="flex flex-col gap-3">
+        <div className="mt-2 flex flex-col gap-3">
           <button
             type="button"
             onClick={() => onStart({ name: name.trim() || 'You', target, difficulty })}
