@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import type { GameState } from '@/lib/leastCount/types';
+import type { GameState, PlayerId } from '@/lib/leastCount/types';
 import Confetti from './Confetti';
 import Modal from './Modal';
 
@@ -18,6 +18,9 @@ export default function GameOverModal({
 }) {
   const router = useRouter();
   const won = state.winner === 'player';
+  const names: Record<PlayerId, string> = { player: playerName, computer: computerName };
+  const ranked: PlayerId[] = (['player', 'computer'] as PlayerId[]).sort((a, b) => state.scores[a] - state.scores[b]);
+  const lastCall = state.lastRoundResult;
 
   return (
     <>
@@ -32,10 +35,27 @@ export default function GameOverModal({
           <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">
             {won ? 'Congratulations, Winner!' : 'Better luck next time'}
           </h2>
-          <p className="text-sm text-ink-muted">
-            Final score — {playerName}: {state.scores.player} &middot; {computerName}: {state.scores.computer}
-          </p>
+          {lastCall && (
+            <p className="text-sm text-ink-muted">
+              {names[lastCall.caller]} called Least Count{lastCall.correct ? ' and got it right.' : ' — but was wrong.'}
+            </p>
+          )}
         </div>
+
+        <div className="mt-4 flex flex-col gap-1.5">
+          {ranked.map((id) => (
+            <div
+              key={id}
+              className={`flex items-center justify-between rounded-xl px-3.5 py-2 text-sm ${
+                id === state.winner ? 'bg-accent/10' : ''
+              }`}
+            >
+              <span className={id === state.winner ? 'font-bold text-accent' : 'text-ink-muted'}>{names[id]}</span>
+              <span className="font-display font-bold text-ink">{state.scores[id]}</span>
+            </div>
+          ))}
+        </div>
+
         <div className="mt-5 flex flex-col gap-3">
           <button
             type="button"

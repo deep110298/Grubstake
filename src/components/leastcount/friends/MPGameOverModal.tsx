@@ -23,6 +23,7 @@ export default function MPGameOverModal({
   const winnerName = state.winner ? state.names[state.winner] : null;
   const iWon = state.winner === myPlayerId;
   const ranked = [...state.seats].sort((a, b) => state.scores[a] - state.scores[b]);
+  const lastCall = state.lastRoundResult;
 
   if (!showStandings) {
     return (
@@ -64,6 +65,11 @@ export default function MPGameOverModal({
   return (
     <Modal>
       <h2 className="font-display text-2xl font-extrabold tracking-tight text-ink">Final standings</h2>
+      {lastCall && (
+        <p className="mt-1 text-sm text-ink-muted">
+          {state.names[lastCall.caller]} called Least Count{lastCall.correct ? ' and got it right.' : ' — but was wrong.'}
+        </p>
+      )}
       <div className="mt-4 flex flex-col gap-1.5">
         {ranked.map((seat) => (
           <div
@@ -73,6 +79,7 @@ export default function MPGameOverModal({
             }`}
           >
             <span className={seat === state.winner ? 'font-bold text-accent' : 'text-ink-muted'}>
+              {seat === lastCall?.caller && <span aria-hidden>📣 </span>}
               {state.names[seat]}
             </span>
             <span className="font-display font-bold text-ink">{state.scores[seat]}</span>
