@@ -141,7 +141,7 @@ export default function MultiplayerGameBoard({
     <div className="relative flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
 
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 py-4">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))]">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center">
           <div className="flex items-center gap-2">
             <span className="mono-label text-[11px] text-ink-soft">{code ? `Room ${code}` : ''}</span>

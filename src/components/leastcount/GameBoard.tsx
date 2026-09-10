@@ -133,7 +133,7 @@ export default function GameBoard({
     <div className="flex min-h-dvh flex-col bg-canvas">
       <WildCardRevealModal jokerRank={state.jokerRank} />
       <div
-        className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 ${daily || story ? 'pt-4' : 'pt-14'}`}
+        className={`mx-auto flex w-full max-w-md flex-1 flex-col gap-3.5 px-4 pb-4 ${daily || story ? 'pt-[max(1rem,env(safe-area-inset-top))]' : 'pt-[max(3.5rem,env(safe-area-inset-top))]'}`}
       >
 
         {daily && (

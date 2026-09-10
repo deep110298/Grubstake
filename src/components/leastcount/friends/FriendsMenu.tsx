@@ -78,7 +78,11 @@ export default function FriendsMenu() {
 
   return (
     <div className="relative flex min-h-dvh flex-col items-center justify-center gap-6 bg-canvas px-4 py-10 text-center">
-      <Link href="/" className="mono-label absolute left-4 top-4 text-xs text-ink-soft hover:text-ink">
+      <Link
+        href="/"
+        className="mono-label absolute left-4 text-xs text-ink-soft hover:text-ink"
+        style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
+      >
         ← Back
       </Link>
 

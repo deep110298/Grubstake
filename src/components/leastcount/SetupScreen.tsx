@@ -37,7 +37,7 @@ export default function SetupScreen({
   const [showRules, setShowRules] = useState(false);
 
   return (
-    <div className="flex min-h-dvh flex-col items-center bg-canvas px-6 pb-5 pt-1.5 text-ink">
+    <div className="flex min-h-dvh flex-col items-center bg-canvas px-6 pb-5 pt-[max(0.75rem,env(safe-area-inset-top))] text-ink">
       <div className="flex w-full max-w-sm items-center justify-between pr-10">
         <Link href="/" className="mono-label text-xs text-ink-soft hover:text-ink">
           ← Home
