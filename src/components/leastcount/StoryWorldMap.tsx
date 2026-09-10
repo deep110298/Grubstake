@@ -45,29 +45,29 @@ export default function StoryWorldMap() {
   return (
     <div className="relative min-h-dvh">
       <div className="pointer-events-none fixed inset-0 -z-10" style={CASINO_BACKDROP_STYLE} aria-hidden />
-      <div className="bg-gradient-to-b from-black/70 via-black/40 to-transparent pb-8 pt-[max(0.75rem,env(safe-area-inset-top))]">
+      <div className="pb-8 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <div className="mx-auto w-full max-w-md px-4">
           <div className="flex items-center justify-between pr-12">
-            <Link href="/" className="mono-label text-xs font-bold text-white">
+            <Link href="/" className="mono-label text-xs font-bold text-ink-soft hover:text-ink">
               ← Home
             </Link>
             {status && (
-              <span className="mono-label rounded-full bg-black/35 px-2.5 py-1 text-xs font-bold text-[#ffd873]">
+              <span className="mono-label rounded-full bg-wild/10 px-2.5 py-1 text-xs font-bold text-wild">
                 ⭐ {status.totalStars}/{TOTAL_LEVELS * 3}
               </span>
             )}
           </div>
 
           <div className="mt-3 flex flex-col gap-1 text-center">
-            <h1 className="font-display text-3xl font-extrabold tracking-tight text-white">Story Mode</h1>
-            <p className="text-sm text-white/70">Clear every level in a world to unlock the next.</p>
+            <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink">Story Mode</h1>
+            <p className="text-sm text-ink-muted">Clear every level in a world to unlock the next.</p>
           </div>
         </div>
       </div>
 
       <div className="mx-auto flex w-full max-w-md flex-col px-4 pb-10">
         {!status ? (
-          <div className="flex flex-1 items-center justify-center py-20 text-sm text-white/60">Loading progress…</div>
+          <div className="flex flex-1 items-center justify-center py-20 text-sm text-ink-muted">Loading progress…</div>
         ) : (
           <div className="mt-8 flex flex-col items-center gap-7">
             {status.worlds.map((w, i) => (
@@ -88,7 +88,7 @@ function WorldNode({ status, offset }: { status: WorldStatus; offset: string }) 
           ? 'border-[#ffd873] bg-[#2d7a52] text-white'
           : status.unlocked
             ? 'border-[#ffe1f0] bg-[#c2367f] text-white'
-            : 'border-white/20 bg-white/10 text-white/50'
+            : 'border-black/10 bg-black/5 text-ink-faint'
       }`}
     >
       {status.cleared ? '✓' : status.unlocked ? status.world : '🔒'}
@@ -104,10 +104,10 @@ function WorldNode({ status, offset }: { status: WorldStatus; offset: string }) 
       ) : (
         content
       )}
-      <span className={`mono-label text-[10px] ${status.unlocked ? 'text-[#f0cf70]' : 'text-white/40'}`}>
+      <span className={`mono-label text-[10px] ${status.unlocked ? 'text-wild' : 'text-ink-faint'}`}>
         {worldName(status.world)}
       </span>
-      {status.unlocked && <span className="mono-label text-[9px] text-white/40">{status.levelsCleared}/{LEVELS_PER_WORLD}</span>}
+      {status.unlocked && <span className="mono-label text-[9px] text-ink-faint">{status.levelsCleared}/{LEVELS_PER_WORLD}</span>}
     </div>
   );
 }

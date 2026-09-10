@@ -43,11 +43,11 @@ export default function StoryLevelMap({ world }: { world: number }) {
   return (
     <div className="relative min-h-dvh">
       <div className="pointer-events-none fixed inset-0 -z-10" style={CASINO_BACKDROP_STYLE} aria-hidden />
-      <div className="sticky top-0 z-20 flex items-center justify-between gap-2 bg-gradient-to-b from-black/55 to-transparent pb-3 pl-4 pr-12 pt-[max(0.75rem,env(safe-area-inset-top))]">
-        <Link href="/play/story" className="mono-label text-xs font-bold text-white">
+      <div className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-black/5 bg-[#fdfbf8]/95 pb-3 pl-4 pr-12 pt-[max(0.75rem,env(safe-area-inset-top))]">
+        <Link href="/play/story" className="mono-label text-xs font-bold text-ink-soft hover:text-ink">
           ← Worlds
         </Link>
-        <span className="mono-label rounded-full bg-black/35 px-2.5 py-1 text-xs font-bold text-[#ffd873]">
+        <span className="mono-label rounded-full bg-wild/10 px-2.5 py-1 text-xs font-bold text-wild">
           {clearedCount}/{LEVELS_PER_WORLD} cleared
         </span>
       </div>
@@ -60,7 +60,7 @@ export default function StoryLevelMap({ world }: { world: number }) {
         </div>
 
         {!levels ? (
-          <div className="flex min-h-[50dvh] items-center justify-center text-sm text-white/60">Loading levels…</div>
+          <div className="flex min-h-[50dvh] items-center justify-center text-sm text-ink-muted">Loading levels…</div>
         ) : (
           <div className="grid grid-cols-4 gap-2.5">
             {levels.map((l, i) => (
@@ -92,7 +92,7 @@ function LevelBox({
           ? 'border-[#ffd873] bg-gradient-to-b from-[#241017] to-[#160709] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.5)]'
           : isCurrent
             ? 'border-2 border-[#c2367f] bg-gradient-to-b from-[#3a1220] to-[#26101a] shadow-[0_0_0_4px_rgba(194,54,127,0.22),0_2px_10px_-2px_rgba(0,0,0,0.5)]'
-            : 'border-[#d4af37]/25 bg-black/25'
+            : 'border-black/10 bg-black/5'
       }`}
     >
       {status.unlocked ? (
