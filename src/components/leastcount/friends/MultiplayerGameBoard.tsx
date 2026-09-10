@@ -155,7 +155,7 @@ export default function MultiplayerGameBoard({
                 >
                   <CardBack size="lg" />
                 </button>
-                <span className="mono-label text-[10px] text-ink-soft">Deck · {display.drawPile.length}</span>
+                <span className="mono-label text-[10px] text-accent">Tap to draw · {display.drawPile.length}</span>
               </div>
               {display.pendingPickup && (
                 <div className="flex flex-col items-center gap-2">

@@ -201,7 +201,7 @@ export default function GameBoard({
                 >
                   <CardBack size="lg" />
                 </button>
-                <span className="mono-label text-[10px] text-ink-soft">Deck · {state.drawPile.length}</span>
+                <span className="mono-label text-[10px] text-accent">Tap to draw · {state.drawPile.length}</span>
               </div>
               {state.pendingPickup && (
                 <div className="flex flex-col items-center gap-2">
