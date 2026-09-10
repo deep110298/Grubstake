@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { getWorldLevels, worldName, LEVELS_PER_WORLD, type StoryLevelConfig } from '@/lib/leastCount/storyLevels';
 import { getStars, isLevelUnlocked, type Stars } from '@/lib/leastCount/storyProgress';
-import { CASINO_BACKDROP_STYLE } from './casinoTheme';
+import { STORY_GLOW_STYLE } from './storyBackdrop';
 
 interface LevelStatus {
   config: StoryLevelConfig;
@@ -41,9 +41,10 @@ export default function StoryLevelMap({ world }: { world: number }) {
   const currentIndex = levels?.findIndex((l) => l.unlocked && l.stars === 0) ?? -1;
 
   return (
-    <div className="relative min-h-dvh">
-      <div className="pointer-events-none fixed inset-0 -z-10" style={CASINO_BACKDROP_STYLE} aria-hidden />
-      <div className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-black/5 bg-[#fdfbf8]/95 pb-3 pl-4 pr-12 pt-[max(0.75rem,env(safe-area-inset-top))]">
+    <div className="relative min-h-dvh bg-canvas">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[380px]" style={STORY_GLOW_STYLE} aria-hidden />
+
+      <div className="sticky top-0 z-20 flex items-center justify-between gap-2 bg-canvas pb-3 pl-4 pr-12 pt-[max(0.75rem,env(safe-area-inset-top))]">
         <Link href="/play/story" className="mono-label text-xs font-bold text-ink-soft hover:text-ink">
           ← Worlds
         </Link>
@@ -53,10 +54,9 @@ export default function StoryLevelMap({ world }: { world: number }) {
       </div>
 
       <div className="mx-auto w-full max-w-md px-4 pb-10">
-        <div className="mx-auto mb-6 mt-1 w-fit rounded-[10px] border-2 border-[#d4af37] bg-gradient-to-b from-[#2a0d17] to-[#1a0810] px-7 py-2.5 shadow-[0_4px_0_rgba(0,0,0,0.35),0_0_18px_rgba(212,175,55,0.25)]">
-          <div className="text-center text-lg font-extrabold tracking-wide text-[#f0cf70]">
-            {worldName(world).toUpperCase()}
-          </div>
+        <div className="mb-6 mt-1 text-center">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink">{worldName(world)}</h1>
+          <p className="text-sm text-ink-muted">World {world}</p>
         </div>
 
         {!levels ? (
@@ -89,21 +89,21 @@ function LevelBox({
       ref={boxRef}
       className={`flex aspect-[5/7] flex-col items-center justify-center gap-1.5 rounded-lg border-[1.5px] font-display transition-transform active:scale-95 ${
         cleared
-          ? 'border-[#ffd873] bg-gradient-to-b from-[#241017] to-[#160709] shadow-[0_2px_8px_-2px_rgba(0,0,0,0.5)]'
+          ? 'border-hairline-strong bg-surface shadow-[0_2px_6px_-2px_rgba(20,16,24,0.12)]'
           : isCurrent
-            ? 'border-2 border-[#c2367f] bg-gradient-to-b from-[#3a1220] to-[#26101a] shadow-[0_0_0_4px_rgba(194,54,127,0.22),0_2px_10px_-2px_rgba(0,0,0,0.5)]'
-            : 'border-black/10 bg-black/5'
+            ? 'border-2 border-wild bg-surface shadow-[0_0_0_4px_rgba(194,54,127,0.16)]'
+            : 'border-hairline-strong bg-surface-sunken'
       }`}
     >
       {status.unlocked ? (
         <>
-          <span className={`text-[11px] font-bold tracking-wide ${isCurrent ? 'text-[#ffe1f0]' : 'text-[#f0cf70]'}`}>
+          <span className={`text-[11px] font-bold tracking-wide ${isCurrent ? 'text-wild' : 'text-ink-soft'}`}>
             Level {status.config.levelInWorld}
           </span>
           {cleared && (
             <span className="text-[11px] tracking-[2px]">
               {[1, 2, 3].map((i) => (
-                <span key={i} className={i <= status.stars ? 'text-[#ffd873]' : 'text-white/25'}>
+                <span key={i} className={i <= status.stars ? 'text-[#e0a500]' : 'text-ink-faint/40'}>
                   ★
                 </span>
               ))}
@@ -111,7 +111,7 @@ function LevelBox({
           )}
         </>
       ) : (
-        <span className="text-lg opacity-50">🔒</span>
+        <span className="text-lg text-ink-faint opacity-70">🔒</span>
       )}
     </div>
   );
