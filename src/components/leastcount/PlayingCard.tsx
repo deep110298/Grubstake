@@ -50,7 +50,9 @@ export default function PlayingCard({
     ? `-translate-y-3.5 border-2 border-accent ${SELECTED_SHADOW}`
     : isZeroValue
       ? `border-2 border-wild ${CARD_SHADOW[size]}`
-      : `border border-hairline-card ${CARD_SHADOW[size]}`;
+      : disabled
+        ? `border border-card-back-border ${CARD_SHADOW[size]}`
+        : `border border-hairline-card ${CARD_SHADOW[size]}`;
 
   return (
     <button
@@ -58,10 +60,10 @@ export default function PlayingCard({
       onClick={onClick}
       disabled={!onClick || disabled}
       className={`relative flex flex-shrink-0 flex-col items-center justify-center rounded-lg font-mono font-bold transition-transform ${SIZE_CLASSES[size]} ${
-        isRaised ? 'bg-card-paper-warm' : 'bg-card-paper'
+        disabled && !isRaised ? 'bg-card-back-a' : isRaised ? 'bg-card-paper-warm' : 'bg-card-paper'
       } ${isRed ? 'text-card-red' : isPhysicalJoker ? 'text-wild' : 'text-card-ink'} ${borderClasses} ${
         onClick && !disabled ? 'cursor-pointer hover:-translate-y-1' : ''
-      } ${disabled ? 'opacity-50' : ''}`}
+      }`}
       aria-pressed={selected}
       aria-label={isPhysicalJoker ? 'Joker' : `${card.rank} of ${card.suit}`}
     >
