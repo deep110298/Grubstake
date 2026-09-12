@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, Reorder } from 'framer-motion';
 import { handValue, sortHand } from '@/lib/multiplayer/deck';
 import {
   call,
@@ -135,6 +135,40 @@ export default function MultiplayerGameBoard({
   const myHand = display.hands[myPlayerId] ?? [];
   const myHandValue = handValue(myHand, display.jokerRank);
   const discardTop = display.discardPile[display.discardPile.length - 1];
+
+  // The player's own preferred card order — starts sorted, then only ever
+  // changes via their own drag, or to fold in cards a draw/new round added.
+  // Adjusted during render (rather than in an effect) when the hand's own
+  // identity changes, same reasoning as prevState/localOverride above:
+  // existing order is preserved, new cards are appended in sorted order.
+  const [handOrder, setHandOrder] = useState<string[]>(() => sortHand(myHand).map((c) => c.id));
+  const [prevHand, setPrevHand] = useState(myHand);
+  if (prevHand !== myHand) {
+    setPrevHand(myHand);
+    const currentIds = new Set(myHand.map((c) => c.id));
+    const kept = handOrder.filter((id) => currentIds.has(id));
+    const additions = sortHand(myHand)
+      .map((c) => c.id)
+      .filter((id) => !kept.includes(id));
+    setHandOrder([...kept, ...additions]);
+  }
+
+  // A one-time nudge that the hand can be dragged into any order — shown at
+  // the start of every fresh game (round 1), not on every round. Whether to
+  // show it is decided during render (the isFirstRound edge, same pattern as
+  // above); the 5s auto-hide is the one genuine side effect (a timer).
+  const isFirstRound = display.roundNumber === 1;
+  const [showHandHint, setShowHandHint] = useState(isFirstRound);
+  const [prevIsFirstRound, setPrevIsFirstRound] = useState(isFirstRound);
+  if (isFirstRound !== prevIsFirstRound) {
+    setPrevIsFirstRound(isFirstRound);
+    setShowHandHint(isFirstRound);
+  }
+  useEffect(() => {
+    if (!showHandHint) return;
+    const timer = setTimeout(() => setShowHandHint(false), 5000);
+    return () => clearTimeout(timer);
+  }, [showHandHint]);
 
   function handleHandCardClick(cardId: string) {
     if (!yourTurnToAct) return;
@@ -295,26 +329,58 @@ export default function MultiplayerGameBoard({
                 Your hand
                 <span className="text-accent">{myHandValue} pts</span>
               </span>
-              <div className="flex flex-wrap justify-center gap-2" key={display.roundNumber}>
-                <AnimatePresence mode="popLayout">
-                  {sortHand(myHand).map((card, i) => (
+              <div className="relative w-full">
+                <Reorder.Group
+                  as="ul"
+                  axis="x"
+                  values={handOrder}
+                  onReorder={setHandOrder}
+                  className="flex list-none justify-center gap-2 overflow-x-auto px-1 py-1"
+                  key={display.roundNumber}
+                >
+                  <AnimatePresence mode="popLayout">
+                    {handOrder.map((id, i) => {
+                      const card = myHand.find((c) => c.id === id);
+                      if (!card) return null;
+                      return (
+                        <Reorder.Item
+                          key={id}
+                          value={id}
+                          as="li"
+                          initial={{ opacity: 0, y: 40, scale: 0.7 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -50, scale: 0.6, transition: { duration: 0.22 } }}
+                          whileDrag={{ scale: 1.08, zIndex: 1 }}
+                          transition={{ ...DEAL_SPRING, delay: i * 0.06 }}
+                          className="flex-shrink-0"
+                        >
+                          <PlayingCard
+                            card={card}
+                            jokerRank={display.jokerRank}
+                            selected={selected.includes(card.id)}
+                            disabled={!yourTurnToAct}
+                            onClick={() => handleHandCardClick(card.id)}
+                          />
+                        </Reorder.Item>
+                      );
+                    })}
+                  </AnimatePresence>
+                </Reorder.Group>
+
+                <AnimatePresence>
+                  {showHandHint && (
                     <motion.div
-                      key={card.id}
-                      layout
-                      initial={{ opacity: 0, y: 40, scale: 0.7 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -50, scale: 0.6, transition: { duration: 0.22 } }}
-                      transition={{ ...DEAL_SPRING, delay: i * 0.06 }}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.85, y: -6 }}
+                      transition={{ duration: 0.3 }}
+                      className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-4"
                     >
-                      <PlayingCard
-                        card={card}
-                        jokerRank={display.jokerRank}
-                        selected={selected.includes(card.id)}
-                        disabled={!yourTurnToAct}
-                        onClick={() => handleHandCardClick(card.id)}
-                      />
+                      <span className="mono-label max-w-[240px] rounded-2xl bg-[#1c1a20]/90 px-4 py-2.5 text-center text-[11px] font-bold leading-relaxed text-white shadow-[0_4px_10px_rgba(0,0,0,0.25)]">
+                        🔀 Drag your cards to arrange them however you like
+                      </span>
                     </motion.div>
-                  ))}
+                  )}
                 </AnimatePresence>
               </div>
             </section>
