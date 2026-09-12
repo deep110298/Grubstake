@@ -335,7 +335,7 @@ export default function MultiplayerGameBoard({
                   axis="x"
                   values={handOrder}
                   onReorder={setHandOrder}
-                  className="flex list-none justify-center gap-2 overflow-x-auto px-1 py-1"
+                  className="flex list-none justify-center py-2"
                   key={display.roundNumber}
                 >
                   <AnimatePresence mode="popLayout">
@@ -352,7 +352,7 @@ export default function MultiplayerGameBoard({
                           exit={{ opacity: 0, y: -50, scale: 0.6, transition: { duration: 0.22 } }}
                           whileDrag={{ scale: 1.08, zIndex: 1 }}
                           transition={{ ...DEAL_SPRING, delay: i * 0.06 }}
-                          className="flex-shrink-0"
+                          className={`flex-shrink-0 ${i === 0 ? '' : '-ml-2.5'}`}
                         >
                           <PlayingCard
                             card={card}
